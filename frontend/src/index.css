@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #eef2f7;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-md p-6;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease forwards;
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+/*.input {
+  @apply p-3 border rounded-lg w-full focus:ring-2 focus:ring-orange-500 focus:outline-none transition;
+}*/
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249,115,22,0.2);
+}
+
+.floating-label {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  color: gray;
+  transition: 0.2s;
+  pointer-events: none;
+}
+
+.peer:focus + .floating-label,
+.peer:not(:placeholder-shown) + .floating-label {
+  top: -8px;
+  font-size: 12px;
+  background: white;
+  padding: 0 4px;
+  color: #f97316;
+}
+
+.btn-orange {
+  background: #f97316;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
