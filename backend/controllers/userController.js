@@ -56,7 +56,7 @@ export const updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" })
     }
 
-    user.username = req.body.username || user.username
+    user.name = req.body.name || user.name
     user.email = req.body.email || user.email
     user.phone = req.body.phone || user.phone
     user.city = req.body.city || user.city
@@ -67,8 +67,10 @@ export const updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user: {
         id: user._id,
-        username: user.username,
+        name: user.name,
         email: user.email,
+        phone: user.phone,
+        city: user.city
       }
     })
 

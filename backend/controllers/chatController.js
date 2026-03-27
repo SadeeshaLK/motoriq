@@ -4,27 +4,27 @@ import Notification from "../models/Notification.js"
 /* CREATE OR GET CHAT */
 
 export const getChat = async(req,res)=>{
+  try {
+    const {vehicleId,sellerId}=req.params
 
-  const {vehicleId,sellerId}=req.params
+    let chat = await Chat.findOne({
+      vehicle: vehicleId,
+      users: { $all: [req.user._id, sellerId] }
+    })
 
-  let chat = await Chat.findOne({
-  vehicle: vehicleId,
-  users: { $all: [req.user.id, sellerId] }
-})
+    if (!chat) {
+      chat = await Chat.create({
+        vehicle: vehicleId,
+        users: [req.user._id, sellerId],
+        messages: []
+      })
+    }
 
-if (!chat) {
-
-  chat = await Chat.create({
-    vehicle: vehicleId,
-    users: [req.user.id, sellerId],
-    messages: []
-  })
-
-}
-
-
-  res.json(chat)
-
+    res.json(chat)
+  } catch (err) {
+    console.error("getChat error:", err)
+    res.status(500).json({ message: "Failed to get or create chat", error: err.message })
+  }
 }
 
 
