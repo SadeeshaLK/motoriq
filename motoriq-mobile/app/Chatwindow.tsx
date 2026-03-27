@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -43,7 +43,7 @@ function SkeletonItem() {
 }
 
 // ─── Fade-in wrapper ──────────────────────────────────────────────────────────
-function FadeInItem({ children, delay = 0 }) {
+function FadeInItem({ children, delay = 0 }: any) {
   const fade = useRef(new Animated.Value(0)).current;
   const slide = useRef(new Animated.Value(15)).current;
 
@@ -52,7 +52,7 @@ function FadeInItem({ children, delay = 0 }) {
       Animated.timing(fade, { toValue: 1, duration: 300, delay, useNativeDriver: true }),
       Animated.spring(slide, { toValue: 0, tension: 80, friction: 10, delay, useNativeDriver: true }),
     ]).start();
-  }, []);
+  }, [delay]);
 
   return (
     <Animated.View style={{ opacity: fade, transform: [{ translateY: slide }] }}>
@@ -62,9 +62,9 @@ function FadeInItem({ children, delay = 0 }) {
 }
 
 // ─── Chat list item ──────────────────────────────────────────────────────────
-function ChatItem({ chat, userId, onPress, index }) {
+function ChatItem({ chat, userId, onPress, index }: any) {
   // Get other user
-  const otherUser = chat.users?.find(u => {
+  const otherUser = chat.users?.find((u: any) => {
     const uid = typeof u === "object" ? u._id : u;
     return String(uid) !== String(userId);
   });
@@ -79,33 +79,38 @@ function ChatItem({ chat, userId, onPress, index }) {
     ? vehicle.images[0]
     : null;
 
-  // Last message
+  // Last message processing
   const lastMsg = chat.messages?.length > 0 ? chat.messages[chat.messages.length - 1] : null;
-  const lastText = lastMsg?.text || "No messages yet";
+
+  let lastText = "No messages yet";
+  if (lastMsg) {
+    if (lastMsg.text) lastText = lastMsg.text;
+    else if (lastMsg.image) lastText = "📷 Image attachment";
+  }
+
   const lastTime = lastMsg?.createdAt
     ? new Date(lastMsg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : "";
   const lastDate = lastMsg?.createdAt ? formatRelativeDate(new Date(lastMsg.createdAt)) : "";
 
   // Unread count
-  const unreadCount = chat.messages?.filter(m => {
+  const unreadCount = chat.messages?.filter((m: any) => {
     const sid = typeof m.sender === "object" ? m.sender._id : m.sender;
-    const read = m.readBy?.some(id => String(id) === String(userId));
+    const read = m.readBy?.some((id: any) => String(id) === String(userId));
     return String(sid) !== String(userId) && !read;
   }).length || 0;
 
   // Is last message from me?
-  const lastSenderId = lastMsg ? (typeof lastMsg.sender === "object" ? lastMsg.sender._id : lastMsg.sender) : null;
+  const lastSenderId = lastMsg && lastMsg.sender ? (typeof lastMsg.sender === "object" ? lastMsg.sender._id : lastMsg.sender) : null;
   const isLastMine = lastSenderId ? String(lastSenderId) === String(userId) : false;
 
   return (
-    <FadeInItem delay={index * 50}>
+    <FadeInItem delay={index * 40}>
       <TouchableOpacity
         style={[styles.chatItem, unreadCount > 0 && styles.chatItemUnread]}
         onPress={onPress}
         activeOpacity={0.7}
       >
-        {/* Avatar */}
         <View style={styles.chatAvatarWrap}>
           {vehicleImg ? (
             <Image source={{ uri: vehicleImg }} style={styles.chatAvatar} />
@@ -123,7 +128,6 @@ function ChatItem({ chat, userId, onPress, index }) {
           )}
         </View>
 
-        {/* Content */}
         <View style={styles.chatContent}>
           <View style={styles.chatTopRow}>
             <Text style={[styles.chatName, unreadCount > 0 && styles.chatNameUnread]} numberOfLines={1}>
@@ -145,8 +149,6 @@ function ChatItem({ chat, userId, onPress, index }) {
             {isLastMine ? "You: " : ""}{lastText}
           </Text>
         </View>
-
-        {/* Arrow */}
         <Text style={styles.chatArrow}>›</Text>
       </TouchableOpacity>
     </FadeInItem>
@@ -154,24 +156,19 @@ function ChatItem({ chat, userId, onPress, index }) {
 }
 
 // ─── Helper: relative date ───────────────────────────────────────────────────
-function formatRelativeDate(date) {
+function formatRelativeDate(date: Date) {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-  if (days === 0) {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  } else if (days === 1) {
-    return "Yesterday";
-  } else if (days < 7) {
-    return date.toLocaleDateString([], { weekday: "short" });
-  } else {
-    return date.toLocaleDateString([], { month: "short", day: "numeric" });
-  }
+  if (days === 0) return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  if (days === 1) return "Yesterday";
+  if (days < 7) return date.toLocaleDateString([], { weekday: "short" });
+  return date.toLocaleDateString([], { month: "short", day: "numeric" });
 }
 
 // ─── Empty state ─────────────────────────────────────────────────────────────
-function EmptyState({ onBrowse }) {
+function EmptyState({ onBrowse }: { onBrowse: () => void }) {
   const scale = useRef(new Animated.Value(0.8)).current;
   const fade = useRef(new Animated.Value(0)).current;
 
@@ -204,13 +201,12 @@ function EmptyState({ onBrowse }) {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function ChatList() {
   const router = useRouter();
-  const { user, token: authToken } = useAuth();
-
-  const [chats, setChats] = useState([]);
+  const { user } = useAuth();
+  
+  const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // ── Fetch chats on focus ───────────────────────────────────────────────────
   useFocusEffect(
     useCallback(() => {
       fetchChats();
@@ -219,13 +215,10 @@ export default function ChatList() {
 
   const fetchChats = async (isRefresh = false) => {
     const t = await AsyncStorage.getItem("token");
-    if (!t) {
-      router.replace("/login");
-      return;
-    }
+    if (!t) return router.replace("/login");
 
     if (isRefresh) setRefreshing(true);
-    else setLoading(true);
+    else if (!chats.length) setLoading(true); // only show global loading if initially empty
 
     try {
       const res = await API.get("/chat", { headers: { Authorization: t } });
@@ -238,48 +231,45 @@ export default function ChatList() {
     }
   };
 
-  // ── Listen for new messages (update list in real-time) ─────────────────────
   useEffect(() => {
-    const onReceive = (msg) => {
-      // Re-fetch the chat list to update last messages & ordering
-      fetchChats();
-    };
-
+    // Listen to real-time incoming messages to instantly bump the list and unread count
+    const onReceive = (msg: any) => fetchChats(false);
+    const onRead = () => fetchChats(false);
+    
     socket.on("receiveMessage", onReceive);
-    return () => { socket.off("receiveMessage", onReceive); };
+    socket.on("messagesRead", onRead);
+    socket.on("messageRead", onRead);
+    
+    return () => { 
+      socket.off("receiveMessage", onReceive);
+      socket.off("messagesRead", onRead);
+      socket.off("messageRead", onRead);
+    };
   }, []);
 
   const onRefresh = () => fetchChats(true);
+  const openChat = (chat: any) => router.push(`/chat/${chat._id}`);
 
-  const openChat = (chat) => {
-    router.push(`/chat/${chat._id}`);
-  };
-
-  // ── Total unread count ─────────────────────────────────────────────────────
   const totalUnread = user ? chats.reduce((sum, chat) => {
-    const count = chat.messages?.filter(m => {
+    const count = chat.messages?.filter((m: any) => {
       const sid = typeof m.sender === "object" ? m.sender._id : m.sender;
-      const read = m.readBy?.some(id => String(id) === String(user.id));
+      const read = m.readBy?.some((id: any) => String(id) === String(user.id));
       return String(sid) !== String(user.id) && !read;
     }).length || 0;
     return sum + count;
   }, 0) : 0;
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <View style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
-
       {/* ══ HERO HEADER ════════════════════════════════════════════════════ */}
       <View style={styles.hero}>
         <View style={styles.blob1} />
         <View style={styles.blob2} />
-
         <View style={styles.heroInner}>
           <View>
             <Text style={styles.heroTitle}>💬 Messages</Text>
             <Text style={styles.heroSub}>Your conversations</Text>
           </View>
-
           {!loading && (
             <View style={styles.countBadge}>
               <Text style={styles.countBadgeText}>
@@ -292,39 +282,21 @@ export default function ChatList() {
       </View>
 
       {/* ══ LOADING SKELETONS ══════════════════════════════════════════════ */}
-      {loading && (
+      {loading ? (
         <View style={{ padding: 14, gap: 12 }}>
           {[1, 2, 3, 4, 5].map(i => <SkeletonItem key={i} />)}
         </View>
-      )}
-
-      {/* ══ EMPTY STATE ════════════════════════════════════════════════════ */}
-      {!loading && chats.length === 0 && (
+      ) : chats.length === 0 ? (
         <EmptyState onBrowse={() => router.replace("/home")} />
-      )}
-
-      {/* ══ CHAT LIST ══════════════════════════════════════════════════════ */}
-      {!loading && chats.length > 0 && (
+      ) : (
         <FlatList
           data={chats}
           keyExtractor={(item) => item._id}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor="#ff6600"
-              colors={["#ff6600"]}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6600" colors={["#ff6600"]} />}
           renderItem={({ item, index }) => (
-            <ChatItem
-              chat={item}
-              userId={user?.id}
-              onPress={() => openChat(item)}
-              index={index}
-            />
+            <ChatItem chat={item} userId={user?.id} onPress={() => openChat(item)} index={index} />
           )}
           ListFooterComponent={() => (
             <View style={styles.footer}>
@@ -335,19 +307,12 @@ export default function ChatList() {
           )}
         />
       )}
-
-      {/* ══ BOTTOM BAR ══════════════════════════════════════════════════════ */}
       <BottomBar activeRoute="/Chatwindow" />
     </View>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STYLES
-// ─────────────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-
-  // ── Hero ──
   hero: {
     backgroundColor: "#111",
     paddingTop: Platform.OS === "ios" ? 60 : 44,
@@ -366,183 +331,48 @@ const styles = StyleSheet.create({
     width: 160, height: 160, borderRadius: 80,
     backgroundColor: "#ff6600", opacity: 0.1,
   },
-  heroInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  heroTitle: {
-    color: "#fff", fontSize: 24, fontWeight: "800", letterSpacing: -0.5,
-  },
-  heroSub: {
-    color: "#9ca3af", fontSize: 13, marginTop: 4,
-  },
-  countBadge: {
-    backgroundColor: "#ff6600",
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-  },
-  countBadgeText: {
-    color: "#fff", fontWeight: "800", fontSize: 13,
-  },
-
-  // ── List ──
-  listContent: {
-    padding: 14,
-    paddingBottom: 130,
-    gap: 8,
-  },
-
-  // ── Chat item ──
+  heroInner: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  heroTitle: { color: "#fff", fontSize: 24, fontWeight: "800", letterSpacing: -0.5 },
+  heroSub: { color: "#9ca3af", fontSize: 13, marginTop: 4 },
+  countBadge: { backgroundColor: "#ff6600", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6 },
+  countBadgeText: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  listContent: { padding: 14, paddingBottom: 130, gap: 8 },
   chatItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 14,
-    gap: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 18,
+    padding: 14, gap: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
   },
-  chatItemUnread: {
-    backgroundColor: "#fffbf7",
-    borderWidth: 1,
-    borderColor: "rgba(255,102,0,0.12)",
-  },
-
-  chatAvatarWrap: {
-    position: "relative",
-  },
-  chatAvatar: {
-    width: 52, height: 52, borderRadius: 16,
-    overflow: "hidden",
-  },
-  chatAvatarFallback: {
-    backgroundColor: "#fff3eb",
-    alignItems: "center", justifyContent: "center",
-  },
+  chatItemUnread: { backgroundColor: "#fffbf7", borderWidth: 1, borderColor: "rgba(255,102,0,0.12)" },
+  chatAvatarWrap: { position: "relative" },
+  chatAvatar: { width: 52, height: 52, borderRadius: 16, overflow: "hidden" },
+  chatAvatarFallback: { backgroundColor: "#fff3eb", alignItems: "center", justifyContent: "center" },
   chatUnreadDot: {
-    position: "absolute", top: -4, right: -4,
-    backgroundColor: "#ef4444",
-    borderRadius: 10,
-    minWidth: 20, height: 20,
-    alignItems: "center", justifyContent: "center",
-    paddingHorizontal: 4,
+    position: "absolute", top: -4, right: -4, backgroundColor: "#ef4444", borderRadius: 10,
+    minWidth: 20, height: 20, alignItems: "center", justifyContent: "center", paddingHorizontal: 4,
     borderWidth: 2, borderColor: "#fff",
   },
-  chatUnreadDotText: {
-    color: "#fff", fontSize: 10, fontWeight: "800",
-  },
-
-  chatContent: {
-    flex: 1,
-    gap: 2,
-  },
-  chatTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  chatName: {
-    fontSize: 15, fontWeight: "700", color: "#111",
-    flex: 1,
-  },
-  chatNameUnread: {
-    fontWeight: "800",
-  },
-  chatTime: {
-    fontSize: 11, color: "#9ca3af", fontWeight: "500",
-  },
-  chatTimeUnread: {
-    color: "#ff6600", fontWeight: "700",
-  },
-  chatVehicle: {
-    fontSize: 11, color: "#9ca3af", fontWeight: "500",
-  },
-  chatLastMsg: {
-    fontSize: 13, color: "#9ca3af", marginTop: 2,
-  },
-  chatLastMsgUnread: {
-    color: "#374151", fontWeight: "600",
-  },
-  chatArrow: {
-    fontSize: 22, color: "#d1d5db", fontWeight: "300",
-  },
-
-  // ── Footer ──
-  footer: {
-    alignItems: "center",
-    paddingVertical: 16,
-  },
-  footerText: {
-    color: "#d1d5db", fontSize: 12, fontWeight: "600",
-  },
-
-  // ── Empty state ──
-  emptyWrap: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 40,
-    paddingTop: 60,
-  },
-  emptyIconWrap: {
-    position: "relative",
-    marginBottom: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  chatUnreadDotText: { color: "#fff", fontSize: 10, fontWeight: "800" },
+  chatContent: { flex: 1, gap: 2 },
+  chatTopRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
+  chatName: { fontSize: 15, fontWeight: "700", color: "#111", flex: 1 },
+  chatNameUnread: { fontWeight: "800" },
+  chatTime: { fontSize: 11, color: "#9ca3af", fontWeight: "500" },
+  chatTimeUnread: { color: "#ff6600", fontWeight: "700" },
+  chatVehicle: { fontSize: 11, color: "#9ca3af", fontWeight: "500" },
+  chatLastMsg: { fontSize: 13, color: "#9ca3af", marginTop: 2 },
+  chatLastMsgUnread: { color: "#374151", fontWeight: "600" },
+  chatArrow: { fontSize: 22, color: "#d1d5db", fontWeight: "300" },
+  footer: { alignItems: "center", paddingVertical: 16 },
+  footerText: { color: "#d1d5db", fontSize: 12, fontWeight: "600" },
+  emptyWrap: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 40, paddingTop: 60 },
+  emptyIconWrap: { position: "relative", marginBottom: 24, alignItems: "center", justifyContent: "center" },
   emptyIcon: { fontSize: 64 },
-  emptyIconPulse: {
-    position: "absolute",
-    width: 90, height: 90,
-    borderRadius: 45,
-    backgroundColor: "#ff6600",
-    opacity: 0.08,
-  },
-  emptyTitle: {
-    fontSize: 22, fontWeight: "800", color: "#111",
-    letterSpacing: -0.4, marginBottom: 10,
-  },
-  emptySubtitle: {
-    fontSize: 14, color: "#9ca3af", textAlign: "center",
-    lineHeight: 22, marginBottom: 32,
-  },
-  browseBtn: {
-    backgroundColor: "#ff6600",
-    paddingVertical: 15,
-    paddingHorizontal: 36,
-    borderRadius: 50,
-    shadowColor: "#ff6600",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  browseBtnText: {
-    color: "#fff", fontWeight: "800", fontSize: 15,
-  },
-
-  // ── Skeleton ──
-  skeletonItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 14,
-    gap: 12,
-  },
-  skeletonAvatar: {
-    width: 52, height: 52, borderRadius: 16,
-    backgroundColor: "#e5e7eb",
-  },
-  skeletonLine: {
-    height: 14, borderRadius: 7,
-    backgroundColor: "#e5e7eb", width: "80%",
-  },
+  emptyIconPulse: { position: "absolute", width: 90, height: 90, borderRadius: 45, backgroundColor: "#ff6600", opacity: 0.08 },
+  emptyTitle: { fontSize: 22, fontWeight: "800", color: "#111", letterSpacing: -0.4, marginBottom: 10 },
+  emptySubtitle: { fontSize: 14, color: "#9ca3af", textAlign: "center", lineHeight: 22, marginBottom: 32 },
+  browseBtn: { backgroundColor: "#ff6600", paddingVertical: 15, paddingHorizontal: 36, borderRadius: 50, shadowColor: "#ff6600", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 8 },
+  browseBtnText: { color: "#fff", fontWeight: "800", fontSize: 15 },
+  skeletonItem: { flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 18, padding: 14, gap: 12 },
+  skeletonAvatar: { width: 52, height: 52, borderRadius: 16, backgroundColor: "#e5e7eb" },
+  skeletonLine: { height: 14, borderRadius: 7, backgroundColor: "#e5e7eb", width: "80%" },
 });
