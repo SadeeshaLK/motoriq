@@ -311,7 +311,6 @@ export default function ChatConversation() {
       const res = await API.post(`/chat/${chat._id}`, formData, {
         headers: {
           Authorization: t,
-          "Content-Type": "multipart/form-data",
         },
       });
       const newMsg = res.data?.message;
