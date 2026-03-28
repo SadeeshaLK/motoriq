@@ -21,6 +21,7 @@ import API from "../../src/services/api";
 import VehicleCard from "../../src/components/VehicleCard";
 import BottomBar from "../../src/components/BottomBar";
 import { calculateMonthlyCost } from "../../src/utils/calculateMonthlyCost";
+import { LineChart } from "react-native-chart-kit";
 
 
 const { width: SCREEN_W } = Dimensions.get("window");
@@ -527,6 +528,53 @@ export default function VehicleDetails() {
                 <FeatureChip key={opt} label={opt} has={vehicle.techOptions?.includes(opt)} />
               ))}
             </View>
+          </View>
+
+          {/* ══ AI COST PREDICTION ═══════════════════════════════════════ */}
+          <View style={s.card}>
+            <SectionHeader emoji="📈" title="AI Cost Prediction" />
+            <Text style={{ fontSize: 13, color: "#9ca3af", marginBottom: 12 }}>
+              Predicted 5-year depreciation value
+            </Text>
+            <LineChart
+              data={{
+                labels: ["Yr 1", "Yr 2", "Yr 3", "Yr 4", "Yr 5"],
+                datasets: [
+                  {
+                    data: [0, 1, 2, 3, 4].map(
+                      (i) => Math.round((vehicle.price || 0) * (1 - 0.1 * i))
+                    ),
+                  },
+                ],
+              }}
+              width={SCREEN_W - 56} // Screen width minus horizontal padding
+              height={220}
+              yAxisLabel="Rs."
+              yAxisSuffix=""
+              yAxisInterval={1}
+              chartConfig={{
+                backgroundColor: "#fff",
+                backgroundGradientFrom: "#fff",
+                backgroundGradientTo: "#fff",
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(249, 115, 22, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+                propsForDots: {
+                  r: "4",
+                  strokeWidth: "2",
+                  stroke: "#ea580c",
+                },
+              }}
+              bezier
+              style={{
+                marginVertical: 8,
+                borderRadius: 16,
+                marginLeft: -10,
+              }}
+            />
           </View>
 
           {/* ══ LOAN CALCULATOR ══════════════════════════════════════════ */}

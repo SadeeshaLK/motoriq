@@ -102,43 +102,50 @@ function MessageBubble({ message, isOwn, userId, onReply }: any) {
     onReply(message);
   };
 
+  const renderBubbleContent = () => (
+    <View style={[s.bubble, isOwn ? s.bubbleOwn : s.bubbleOther]}>
+      {/* Reply Reference Section */}
+      {message.replyTo && (
+        <View style={[s.replyRef, isOwn ? s.replyRefOwn : s.replyRefOther]}>
+          <Text style={s.replyRefName} numberOfLines={1}>{message.replyTo.senderName}</Text>
+          <Text style={s.replyRefText} numberOfLines={2}>{message.replyTo.text}</Text>
+        </View>
+      )}
+
+      {/* Attachment */}
+      {message.image && (
+        <Image source={{ uri: message.image }} style={s.bubbleImage} />
+      )}
+
+      {/* Text content */}
+      {!!message.text && (
+        <Text style={[s.bubbleText, isOwn && s.bubbleTextOwn]}>{message.text}</Text>
+      )}
+
+      <View style={s.bubbleMeta}>
+        <Text style={[s.timeText, isOwn && s.timeTextOwn]}>{time}</Text>
+        {isOwn && (
+          <Text style={[s.receipt, seen && s.receiptSeen]}>
+            {seen ? " ✔✔" : " ✔"}
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+
   return (
     <Animated.View style={[{ opacity: fade, transform: [{ translateY: slide }] }, s.bubbleRow, isOwn ? s.bubbleRowOwn : s.bubbleRowOther]}>
-      <Swipeable
-        renderRightActions={isOwn ? undefined : renderRightActions}
-        onSwipeableRightOpen={isOwn ? undefined : handleSwipeOpen}
-        friction={2}
-      >
-        <View style={[s.bubble, isOwn ? s.bubbleOwn : s.bubbleOther]}>
-          
-          {/* Reply Reference Section */}
-          {message.replyTo && (
-            <View style={[s.replyRef, isOwn ? s.replyRefOwn : s.replyRefOther]}>
-              <Text style={s.replyRefName} numberOfLines={1}>{message.replyTo.senderName}</Text>
-              <Text style={s.replyRefText} numberOfLines={2}>{message.replyTo.text}</Text>
-            </View>
-          )}
-
-          {/* Attachment */}
-          {message.image && (
-            <Image source={{ uri: message.image }} style={s.bubbleImage} />
-          )}
-
-          {/* Text content */}
-          {!!message.text && (
-            <Text style={[s.bubbleText, isOwn && s.bubbleTextOwn]}>{message.text}</Text>
-          )}
-
-          <View style={s.bubbleMeta}>
-            <Text style={[s.timeText, isOwn && s.timeTextOwn]}>{time}</Text>
-            {isOwn && (
-              <Text style={[s.receipt, seen && s.receiptSeen]}>
-                {seen ? " ✔✔" : " ✔"}
-              </Text>
-            )}
-          </View>
-        </View>
-      </Swipeable>
+      {isOwn ? (
+        renderBubbleContent()
+      ) : (
+        <Swipeable
+          renderRightActions={renderRightActions}
+          onSwipeableRightOpen={handleSwipeOpen}
+          friction={2}
+        >
+          {renderBubbleContent()}
+        </Swipeable>
+      )}
     </Animated.View>
   );
 }
