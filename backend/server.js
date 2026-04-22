@@ -29,16 +29,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 // Middleware
 app.use(cors())
 app.use(express.json())
-app.use((req,res,next)=>{
-  req.io = io
-  next()
-})
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log("❌ MongoDB Error:", err))
-
 
 /* CREATE HTTP SERVER */
 const server = http.createServer(app)
@@ -52,6 +47,12 @@ const io = new Server(server, {
 })
 
 global.io = io
+
+// Attach io to requests AFTER it's created
+app.use((req, res, next) => {
+  req.io = io
+  next()
+})
 
 io.on("connection",(socket)=>{
 

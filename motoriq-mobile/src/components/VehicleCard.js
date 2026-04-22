@@ -42,6 +42,8 @@ export default function VehicleCard({
     if (firstImage.startsWith("http")) {
       imageUrl = firstImage;
     } else {
+      if (firstImage.startsWith("/")) firstImage = firstImage.slice(1);
+      
       if (firstImage.startsWith("uploads/")) {
         finalPath = firstImage;
       } else {

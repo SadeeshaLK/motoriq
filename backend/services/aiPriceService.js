@@ -21,6 +21,8 @@ export const bestDealScore = (vehicle) => {
 
   const predicted = predictVehiclePrice(vehicle)
 
+  if (!predicted || predicted <= 0) return 0;
+
   const difference = predicted - vehicle.price
 
   const score = Math.min(100, Math.max(0, difference / predicted * 100))

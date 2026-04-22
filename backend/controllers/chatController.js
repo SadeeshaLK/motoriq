@@ -132,7 +132,7 @@ export const markAsRead = async (req, res) => {
 
     await chat.save()
 
-    global.io.to(chatId).emit("messagesRead", {
+    req.io.to(chatId).emit("messagesRead", {
       messageId,
       userId: req.user.id
     })
@@ -169,11 +169,11 @@ export const markAllRead = async (req, res) => {
     }
 
     // Emit to people inside the chat room
-    global.io.to(chatId).emit("messagesRead", { chatId, userId })
+    req.io.to(chatId).emit("messagesRead", { chatId, userId })
     
     // Emit to all participants so their chat lists update
     chat.users.forEach(u => {
-      global.io.to(u.toString()).emit("messagesRead", { chatId, userId })
+      req.io.to(u.toString()).emit("messagesRead", { chatId, userId })
     })
 
     res.json({ success: true })
@@ -227,7 +227,7 @@ export const deleteMessage = async (req, res) => {
     await chat.save()
 
     // Notify other users in the chat room
-    global.io.to(chatId).emit("messageDeleted", { messageId })
+    req.io.to(chatId).emit("messageDeleted", { messageId })
 
     res.json({ success: true, message: "Message deleted" })
   } catch (err) {
