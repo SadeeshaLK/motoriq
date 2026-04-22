@@ -1,8 +1,9 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import API from "../services/api";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calculateMonthlyCost } from "../utils/calculateMonthlyCost";
+import { useTheme } from "../context/ThemeContext";
 
 export default function VehicleCard({
   vehicle,
@@ -12,6 +13,7 @@ export default function VehicleCard({
   addToCompare
 }) {
   const router = useRouter();
+  const { theme: t } = useTheme();
 
   const estimatedMonthly = calculateMonthlyCost(vehicle);
 
@@ -20,183 +22,164 @@ export default function VehicleCard({
     vehicle.mileage < 80000 &&
     vehicle.maintenanceLevel === "low";
 
-  // SELLER RATING
   let sellerRating = null;
-
   if (vehicle.user) {
-    if (vehicle.user.rating) {
-      sellerRating = vehicle.user.rating;
-    } else if (vehicle.trustScore) {
-      sellerRating = Math.min(5, vehicle.trustScore / 20).toFixed(1);
-    } else {
-      sellerRating = 3.5;
-    }
+    sellerRating = vehicle.user.rating
+      || (vehicle.trustScore ? Math.min(5, vehicle.trustScore / 20).toFixed(1) : 3.5);
   }
 
   // IMAGE LOGIC
   let imageUrl = "https://via.placeholder.com/300";
-
   if (vehicle.images && vehicle.images.length > 0) {
     let firstImage = vehicle.images[0];
-
-    if (firstImage.startsWith("/")) {
-      firstImage = firstImage.slice(1);
-    }
-
-    if (firstImage.startsWith("http")) {
-      imageUrl = firstImage;
-    } else {
-      imageUrl = `https://motoriq-lk.onrender.com/${firstImage}`;
-    }
+    if (firstImage.startsWith("/")) firstImage = firstImage.slice(1);
+    imageUrl = firstImage.startsWith("http")
+      ? firstImage
+      : `https://motoriq-lk.onrender.com/${firstImage}`;
   }
 
   return (
     <TouchableOpacity
       onPress={() => router.push(`/vehicle/${vehicle._id}`)}
-      style={{
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        marginBottom: 15,
-        overflow: "hidden",
-        elevation: 3,
-      }}
+      style={[styles.card, { backgroundColor: t.bgCard, ...t.shadowSm }]}
     >
       {/* IMAGE */}
-      <Image
-        source={{ uri: imageUrl }}
-        style={{ width: "100%", height: 180 }}
-        resizeMode="cover"
-      />
+      <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
 
-      <View style={{ padding: 12 }}>
-        {/* TITLE */}
-        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+      {/* Best Deal badge */}
+      {vehicle.dealScore > 20 && (
+        <View style={[styles.dealBadge, { backgroundColor: t.green }]}>
+          <Text style={styles.dealBadgeText}>🔥 Best Deal</Text>
+        </View>
+      )}
+
+      <View style={styles.body}>
+        {/* Title */}
+        <Text style={[styles.title, { color: t.textPrimary }]}>
           {vehicle.brand} {vehicle.model} {vehicle.manufacturedYear}
         </Text>
 
-        {/* LOCATION */}
-        <Text style={{ fontSize: 12, color: "gray", marginTop: 3 }}>
+        {/* Location */}
+        <Text style={[styles.location, { color: t.textMuted }]}>
           📍 {vehicle.city || vehicle.district || "Location not specified"}
         </Text>
 
-        {/* SELLER RATING */}
+        {/* Seller rating */}
         {sellerRating && (
-          <Text
-            style={{
-              marginTop: 5,
-              backgroundColor: "#facc15",
-              padding: 4,
-              borderRadius: 5,
-              alignSelf: "flex-start",
-            }}
-          >
-            ⭐ {sellerRating}
-          </Text>
+          <View style={[styles.ratingPill, { backgroundColor: t.isDark ? "rgba(234,179,8,0.15)" : "#fef9c3" }]}>
+            <Text style={{ color: t.yellow, fontSize: 12, fontWeight: "700" }}>⭐ {sellerRating}</Text>
+          </View>
         )}
 
-        {/* PRICE */}
-        <Text
-          style={{
-            color: "#ff6600",
-            fontWeight: "bold",
-            fontSize: 18,
-            marginTop: 5,
-          }}
-        >
+        {/* Price */}
+        <Text style={[styles.price, { color: t.primary }]}>
           LKR {vehicle.price?.toLocaleString()}
         </Text>
 
-        {/* DETAILS */}
-        <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 5 }}>
-          <Text style={badge}>🛣 {vehicle.mileage?.toLocaleString()} km</Text>
-          {vehicle.transmission && (
-            <Text style={badge}>⚙ {vehicle.transmission}</Text>
+        {/* Badges row */}
+        <View style={styles.badgeRow}>
+          <Chip label={`🛣 ${vehicle.mileage?.toLocaleString()} km`} t={t} />
+          {vehicle.transmission && <Chip label={`⚙ ${vehicle.transmission}`} t={t} />}
+          {vehicle.fuelType && <Chip label={`⛽ ${vehicle.fuelType}`} t={t} />}
+          {vehicle.engineCapacity && <Chip label={`🔧 ${vehicle.engineCapacity}cc`} t={t} />}
+        </View>
+
+        {/* Info chips */}
+        <View style={styles.badgeRow}>
+          <Chip label={`Trust: ${vehicle.trustScore ?? 0}/100`} t={t} />
+          <Chip label={`Monthly: LKR ${estimatedMonthly?.toLocaleString()}`} t={t} color={t.blueGlow} textColor={t.blue} />
+          {estimatedMonthly <= monthlyBudget && (
+            <Chip label="✓ Within Budget" t={t} color={t.greenGlow} textColor={t.green} />
           )}
-          {vehicle.fuelType && (
-            <Text style={badge}>⛽ {vehicle.fuelType}</Text>
-          )}
-          {vehicle.engineCapacity && (
-            <Text style={badge}>🔧 {vehicle.engineCapacity}cc</Text>
+          {isCityFriendly && (
+            <Chip label="🏙 City Friendly" t={t} color={t.greenGlow} textColor={t.green} />
           )}
         </View>
 
-        {/* DEAL */}
-        {vehicle.dealScore > 20 && (
-          <Text style={[badge, { backgroundColor: "green", color: "#fff" }]}>
-            🔥 Best Deal
-          </Text>
-        )}
-
-        {/* TRUST */}
-        <Text style={[badge, { backgroundColor: "#eee" }]}>
-          Trust: {vehicle.trustScore ?? 0}/100
-        </Text>
-
-        {/* MONTHLY */}
-        <Text style={[badge, { backgroundColor: "#dbeafe" }]}>
-          Monthly: LKR {estimatedMonthly?.toLocaleString()}
-        </Text>
-
-        {/* BUDGET */}
-        {estimatedMonthly <= monthlyBudget && (
-          <Text style={[badge, { backgroundColor: "#dcfce7" }]}>
-            Within Budget
-          </Text>
-        )}
-
-        {/* CITY FRIENDLY */}
-        {isCityFriendly && (
-          <Text style={[badge, { backgroundColor: "green", color: "#fff" }]}>
-            City Friendly
-          </Text>
-        )}
-
-        {/* BUTTONS */}
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
+        {/* Action buttons */}
+        <View style={styles.actions}>
           <TouchableOpacity
-            onPress={async (e) => {
+            onPress={async () => {
               try {
                 const token = await AsyncStorage.getItem("token");
-
-                await API.post(
-                  `/users/favorite/${vehicle._id}`,
-                  {},
-                  { headers: { Authorization: token } }
-                );
+                await API.post(`/users/favorite/${vehicle._id}`, {}, { headers: { Authorization: token } });
               } catch (err) {
                 console.log(err);
               }
             }}
-            style={btn}
+            style={[styles.actionBtn, { backgroundColor: t.redGlow, borderColor: t.red }]}
           >
-            <Text>❤️ Favorite</Text>
+            <Text style={[styles.actionBtnText, { color: t.red }]}>❤️ Favorite</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => addToCompare(vehicle)}
-            style={btn}
+            style={[styles.actionBtn, { backgroundColor: t.chipBg, borderColor: t.borderGlass }]}
           >
-            <Text>⚖ Compare</Text>
+            <Text style={[styles.actionBtnText, { color: t.textSecondary }]}>⚖ Compare</Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </TouchableOpacity>
   );
 }
 
-const badge = {
-  backgroundColor: "#f1f5f9",
-  padding: 5,
-  borderRadius: 5,
-  marginRight: 5,
-  marginTop: 5,
-  fontSize: 12,
-};
+/* ── Chip helper ─────────────────────────────────────────────────────────── */
+function Chip({ label, t, color, textColor }) {
+  return (
+    <View style={[styles.chip, { backgroundColor: color || t.chipBg }]}>
+      <Text style={[styles.chipText, { color: textColor || t.chipText }]}>{label}</Text>
+    </View>
+  );
+}
 
-const btn = {
-  backgroundColor: "#eee",
-  padding: 8,
-  borderRadius: 6,
-  marginRight: 10,
-};
+/* ── Styles ─────────────────────────────────────────────────────────────── */
+const styles = StyleSheet.create({
+  card: {
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: "hidden",
+  },
+  image: { width: "100%", height: 190 },
+  dealBadge: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  dealBadgeText: { color: "#fff", fontSize: 11, fontWeight: "800" },
+
+  body: { padding: 14 },
+  title: { fontWeight: "800", fontSize: 16, marginBottom: 4 },
+  location: { fontSize: 12, marginBottom: 6 },
+  ratingPill: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+    marginBottom: 6,
+  },
+  price: { fontWeight: "800", fontSize: 20, marginBottom: 10 },
+
+  badgeRow: { flexDirection: "row", flexWrap: "wrap", marginBottom: 6 },
+  chip: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 20,
+    marginRight: 6,
+    marginBottom: 5,
+  },
+  chipText: { fontSize: 11, fontWeight: "600" },
+
+  actions: { flexDirection: "row", gap: 8, marginTop: 8 },
+  actionBtn: {
+    flex: 1,
+    paddingVertical: 9,
+    borderRadius: 10,
+    alignItems: "center",
+    borderWidth: 1,
+  },
+  actionBtnText: { fontSize: 13, fontWeight: "700" },
+});
