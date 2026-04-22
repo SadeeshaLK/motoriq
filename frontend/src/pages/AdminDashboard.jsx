@@ -121,8 +121,12 @@ export default function AdminDashboard() {
   /* ===== CSV EXPORT ===== */
 
   const exportCSV = (headers, rows, filename) => {
-    const csv = [headers, ...rows].map(r => r.join(",")).join("\n")
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const csvContent = [
+      headers.map(h => `"${String(h).replace(/"/g, '""')}"`).join(","),
+      ...rows.map(r => r.map(field => `"${String(field || "").replace(/"/g, '""')}"`).join(","))
+    ].join("\n")
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
     link.download = filename
@@ -132,8 +136,20 @@ export default function AdminDashboard() {
   const exportUsersCSV = () => {
     if (!users.length) return toast.error("No users to export")
     exportCSV(
-      ["Name", "Email", "Listings", "Joined", "Last Login", "Trust Score", "Banned"],
-      users.map(u => [u.name, u.email, u.listingsCount, u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "", u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "", u.trustScore || 50, u.isBanned ? "Yes" : "No"]),
+      ["Name", "Email", "Phone", "City", "Listings", "Total Reviews", "Joined", "Last Login", "Trust Score", "Admin", "Banned"],
+      users.map(u => [
+        u.name, 
+        u.email, 
+        u.phone || "N/A",
+        u.city || "N/A",
+        u.listingsCount, 
+        u.totalReviews || 0,
+        u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "", 
+        u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "", 
+        u.trustScore || 50, 
+        u.isAdmin ? "Yes" : "No",
+        u.isBanned ? "Yes" : "No"
+      ]),
       "users.csv"
     )
   }
@@ -141,8 +157,27 @@ export default function AdminDashboard() {
   const exportVehiclesCSV = () => {
     if (!vehicles.length) return toast.error("No vehicles to export")
     exportCSV(
-      ["Brand", "Model", "Year", "Price", "City", "Seller", "Email"],
-      vehicles.map(v => [v.brand, v.model, v.manufacturedYear, v.price, v.city, v.user?.name, v.user?.email]),
+      ["Brand", "Model", "Year", "Price", "Condition", "Type", "Fuel", "Transmission", "Mileage", "Engine (cc)", "Province", "District", "City", "Views", "Premium", "Seller", "Seller Email", "Posted Date"],
+      vehicles.map(v => [
+        v.brand, 
+        v.model, 
+        v.manufacturedYear, 
+        v.price, 
+        v.condition,
+        v.vehicleType,
+        v.fuelType,
+        v.transmission,
+        v.mileage,
+        v.engineCapacity || "N/A",
+        v.province || "N/A",
+        v.district || "N/A",
+        v.city, 
+        v.views || 0,
+        v.isPremium ? "Yes" : "No",
+        v.user?.name, 
+        v.user?.email,
+        v.createdAt ? new Date(v.createdAt).toLocaleDateString() : ""
+      ]),
       "vehicles.csv"
     )
   }
