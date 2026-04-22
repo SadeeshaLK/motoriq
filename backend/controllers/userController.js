@@ -63,6 +63,7 @@ export const updateProfile = async (req, res) => {
 
     if(req.body.settings) {
        user.settings = req.body.settings
+       user.markModified('settings')
     }
 
     await user.save()

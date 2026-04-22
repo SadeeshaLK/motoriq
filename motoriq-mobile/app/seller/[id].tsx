@@ -12,6 +12,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../src/services/api";
 import VehicleCard from "../../src/components/VehicleCard";
 import BottomBar from "../../src/components/BottomBar";
@@ -92,6 +93,7 @@ export default function SellerProfile() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Hero parallax
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -106,6 +108,8 @@ export default function SellerProfile() {
     setIsPrivate(false);
 
     try {
+      const stored = await AsyncStorage.getItem("user");
+      if (stored) setCurrentUser(JSON.parse(stored));
       const userRes = await API.get(`/users/${id}`);
       setSeller(userRes.data);
 
@@ -212,6 +216,14 @@ export default function SellerProfile() {
               <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
                 <Text style={s.backBtnText}>←</Text>
               </TouchableOpacity>
+
+              {currentUser && (currentUser.id === seller._id || currentUser._id === seller._id) && seller.settings?.privacy?.publicProfile === false && (
+                <View style={{ backgroundColor: "#fef08a", padding: 10, borderRadius: 8, marginHorizontal: 20, marginTop: 40, marginBottom: -20, zIndex: 10 }}>
+                  <Text style={{ color: "#854d0e", fontSize: 12, textAlign: "center", fontWeight: "700" }}>
+                    ⚠️ Your profile is hidden from the public.
+                  </Text>
+                </View>
+              )}
 
               <FadeIn delay={0}>
                 {/* Avatar */}

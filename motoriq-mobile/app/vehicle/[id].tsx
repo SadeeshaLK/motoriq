@@ -460,7 +460,7 @@ export default function VehicleDetails() {
               </Text>
             </View>
 
-            {(vehicle.user?.settings?.privacy?.showPhone || (currentUser && currentUser._id === vehicle.user?._id)) ? (
+            {(vehicle.user?.settings?.privacy?.showPhone || (currentUser && (currentUser.id === vehicle.user?._id || currentUser._id === vehicle.user?._id))) ? (
               <View style={s.contactRow}>
                 <TouchableOpacity style={s.callBtn} onPress={callSeller}>
                   <Text style={s.callBtnText}>📞 Call</Text>
