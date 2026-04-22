@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo, useCallback } from "react";
 import {
   View,
   Text,
@@ -43,7 +43,7 @@ function SkeletonCard() {
 }
 
 // ─── Fade-in wrapper ──────────────────────────────────────────────────────────
-function FadeIn({ children, delay = 0 }) {
+const FadeIn = memo(({ children, delay = 0 }) => {
   const fade = useRef(new Animated.Value(0)).current;
   const slide = useRef(new Animated.Value(24)).current;
   useEffect(() => {
@@ -57,10 +57,10 @@ function FadeIn({ children, delay = 0 }) {
       {children}
     </Animated.View>
   );
-}
+});
 
 // ─── Stat pill ────────────────────────────────────────────────────────────────
-function StatPill({ icon, value, label }) {
+const StatPill = memo(({ icon, value, label }) => {
   return (
     <View style={s.statPill}>
       <Text style={s.statIcon}>{icon}</Text>
@@ -68,10 +68,10 @@ function StatPill({ icon, value, label }) {
       <Text style={s.statLabel}>{label}</Text>
     </View>
   );
-}
+});
 
 // ─── Info tile ────────────────────────────────────────────────────────────────
-function InfoTile({ label, value }) {
+const InfoTile = memo(({ label, value }) => {
   if (!value) return null;
   return (
     <View style={s.infoTile}>
@@ -79,7 +79,7 @@ function InfoTile({ label, value }) {
       <Text style={s.infoTileValue}>{value}</Text>
     </View>
   );
-}
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN SCREEN
@@ -181,6 +181,20 @@ export default function SellerProfile() {
     ? new Date(seller.lastLogin).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
     : "N/A";
 
+  const renderItem = useCallback(({ item, index }) => (
+    <FadeIn delay={index < 6 ? index * 80 : 0}>
+      <View style={{ paddingHorizontal: 14 }}>
+        <VehicleCard
+          vehicle={item}
+          compareList={[]}
+          setCompareList={() => { }}
+          monthlyBudget={9999999}
+          addToCompare={() => { }}
+        />
+      </View>
+    </FadeIn>
+  ), []);
+
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <View style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
@@ -188,6 +202,11 @@ export default function SellerProfile() {
       <Animated.FlatList
         data={vehicles}
         keyExtractor={(item) => item._id}
+        renderItem={renderItem}
+        initialNumToRender={4}
+        maxToRenderPerBatch={4}
+        windowSize={5}
+        removeClippedSubviews={true}
         contentContainerStyle={{ paddingBottom: 160 }}
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
@@ -289,17 +308,7 @@ export default function SellerProfile() {
           </View>
         )}
 
-        renderItem={({ item, index }) => (
-          <FadeIn delay={index * 55}>
-            <View style={s.cardWrap}>
-              <VehicleCard
-                vehicle={item}
-                monthlyBudget={50000}
-                addToCompare={() => { }}
-              />
-            </View>
-          </FadeIn>
-        )}
+
 
         ListFooterComponent={() =>
           vehicles.length > 0 ? (

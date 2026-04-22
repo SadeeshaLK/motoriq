@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import API from "../services/api";
 import { useRouter } from "expo-router";
@@ -176,14 +177,16 @@ export default function VehicleCard({
   );
 }
 
+export default memo(VehicleCard);
+
 /* ── Chip helper ─────────────────────────────────────────────────────────── */
-function Chip({ label, t, color, textColor }) {
+const Chip = memo(({ label, t, color, textColor }) => {
   return (
     <View style={[styles.chip, { backgroundColor: color || t.chipBg }]}>
       <Text style={[styles.chipText, { color: textColor || t.chipText }]}>{label}</Text>
     </View>
   );
-}
+});
 
 /* ── Styles ─────────────────────────────────────────────────────────────── */
 const styles = StyleSheet.create({
