@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../src/context/ThemeContext";
 import ThemeToggle from "../src/components/ThemeToggle";
 import BottomBar from "../src/components/BottomBar";
+import API from "../src/services/api";
 
 export default function Settings() {
   const router = useRouter();
