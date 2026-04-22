@@ -53,11 +53,19 @@ city: {
     },
 
     favorites: [
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Vehicle"
-  }
-]
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vehicle"
+      }
+    ],
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    isBanned: {
+      type: Boolean,
+      default: false
+    }
 
   },
   { timestamps: true }
