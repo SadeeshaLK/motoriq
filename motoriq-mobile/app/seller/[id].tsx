@@ -127,6 +127,20 @@ export default function SellerProfile() {
     }
   };
 
+  const renderItem = useCallback(({ item, index }) => (
+    <FadeIn delay={index < 6 ? index * 80 : 0}>
+      <View style={{ paddingHorizontal: 14 }}>
+        <VehicleCard
+          vehicle={item}
+          compareList={[]}
+          setCompareList={() => { }}
+          monthlyBudget={9999999}
+          addToCompare={() => { }}
+        />
+      </View>
+    </FadeIn>
+  ), []);
+
   // ── Loading state ──────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -180,20 +194,6 @@ export default function SellerProfile() {
   const lastActive = seller.lastLogin
     ? new Date(seller.lastLogin).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
     : "N/A";
-
-  const renderItem = useCallback(({ item, index }) => (
-    <FadeIn delay={index < 6 ? index * 80 : 0}>
-      <View style={{ paddingHorizontal: 14 }}>
-        <VehicleCard
-          vehicle={item}
-          compareList={[]}
-          setCompareList={() => { }}
-          monthlyBudget={9999999}
-          addToCompare={() => { }}
-        />
-      </View>
-    </FadeIn>
-  ), []);
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
