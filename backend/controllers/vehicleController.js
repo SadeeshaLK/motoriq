@@ -200,6 +200,8 @@ export const getVehicleById = async (req, res) => {
       return res.status(404).json("Vehicle not found")
     }
 
+    console.log(`Vehicle ${id} viewed. New count: ${vehicle.views}`);
+
     /* AI price prediction */
     const predictedPrice = predictVehiclePrice(vehicle)
 

@@ -221,6 +221,7 @@ export default function VehicleDetails() {
       const res = await API.get(`/vehicles/${id}`);
       setVehicle(res.data);
       setViews(res.data.views || 0);
+      console.log(`Fetched vehicle ${id}. Views: ${res.data.views}`);
 
       const [similar, rec, reviewRes] = await Promise.allSettled([
         API.get("/vehicles/search", { params: { brand: res.data.brand, vehicleType: res.data.vehicleType } }),
