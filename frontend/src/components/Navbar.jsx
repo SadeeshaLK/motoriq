@@ -464,7 +464,7 @@ export default function Navbar() {
                     ))}
 
 
-                    {user?.email === "admin@motoriq.lk" && (
+                    {user?.isAdmin && (
                       <button
                         onClick={()=>{ navigate("/admin"); setOpen(false) }}
                         className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors"
