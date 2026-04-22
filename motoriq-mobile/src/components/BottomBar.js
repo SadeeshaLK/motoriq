@@ -35,16 +35,16 @@ const TAB_ITEMS = [
     key: "post",
     route: "/Addvehicle",
     label: "Post Ad",
-    icon: null, // special center CTA button
+    icon: null,
     activeIcon: null,
     isCta: true,
   },
   {
-    key: "chat",
-    route: "/Chatwindow",
-    label: "Chat",
-    icon: "💬",
-    activeIcon: "💬",
+    key: "notifications",
+    route: "/Notifications",
+    label: "Alerts",
+    icon: "🔔",
+    activeIcon: "🔔",
   },
   {
     key: "account",

@@ -43,14 +43,20 @@ export default function Navbar() {
 
       try {
 
-        const res = await axios.get("/notifications",{
-          headers:{ Authorization: token }
+        const res = await axios.get("/notifications", {
+          headers: { Authorization: token }
         })
 
-        setNotifications(res.data)
+        // Handle both old format (array) and new format ({notifications, unreadCount})
+        const data = res.data
+        if (Array.isArray(data)) {
+          setNotifications(data)
+        } else {
+          setNotifications(data.notifications || [])
+        }
 
       } catch(err){
-        console.error("Notification load error:",err)
+        console.error("Notification load error:", err)
       }
 
     }
@@ -100,7 +106,10 @@ export default function Navbar() {
         ...prev
       ])
 
-      toast("📩 New message received")
+      toast(
+        `${notif.type === 'message' ? '💬' : notif.type === 'alert' ? '⚠️' : '🔔'} ${notif.title || notif.text}`,
+        { duration: 4000 }
+      )
 
     }
 
@@ -287,30 +296,103 @@ export default function Navbar() {
                   <div className="absolute right-0 mt-3 w-80 backdrop-blur-xl border rounded-xl py-2 z-50 animate-fade-in"
                     style={{ background: 'var(--dropdown-bg)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
-                    <div className="px-4 py-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    {/* Header */}
+                    <div className="px-4 py-2 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                       <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Notifications</p>
+                      <div className="flex gap-2">
+                        {notifications.filter(n=>!n.read).length > 0 && (
+                          <button
+                            onClick={async () => {
+                              await axios.put("/notifications/read-all", {}, { headers: { Authorization: token } })
+                              setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+                            }}
+                            className="text-xs font-medium"
+                            style={{ color: 'var(--primary)' }}
+                          >
+                            Mark all read
+                          </button>
+                        )}
+                        {notifications.length > 0 && (
+                          <button
+                            onClick={async () => {
+                              await axios.delete("/notifications", { headers: { Authorization: token } })
+                              setNotifications([])
+                            }}
+                            className="text-xs"
+                            style={{ color: 'var(--text-muted)' }}
+                          >
+                            Clear all
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {notifications.length === 0 && (
-                      <p className="p-4 text-sm text-center" style={{ color: 'var(--text-muted)' }}>
-                        No notifications yet
-                      </p>
+                      <div className="p-8 text-center">
+                        <div className="text-3xl mb-2">🔔</div>
+                        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No notifications yet</p>
+                      </div>
                     )}
 
-                    <div className="max-h-64 overflow-y-auto">
+                    <div className="max-h-80 overflow-y-auto">
                       {notifications.map((n,i)=>(
                         <div
-                          key={i}
-                          className="px-4 py-3 text-sm cursor-pointer transition-colors"
-                          style={{ color: n.read ? 'var(--text-muted)' : 'var(--text-primary)' }}
+                          key={n._id || i}
+                          className="px-4 py-3 text-sm cursor-pointer transition-colors flex items-start gap-3 group relative"
+                          style={{
+                            background: n.read ? 'transparent' : 'var(--primary-glow)',
+                            borderLeft: n.read ? '3px solid transparent' : '3px solid var(--primary)'
+                          }}
                           onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
-                          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                          onClick={()=>{
+                          onMouseLeave={e => e.currentTarget.style.background = n.read ? 'transparent' : 'var(--primary-glow)'}
+                          onClick={async () => {
+                            if (!n.read && n._id) {
+                              await axios.put(`/notifications/read/${n._id}`, {}, { headers: { Authorization: token } })
+                              setNotifications(prev => prev.map(item => item._id === n._id ? { ...item, read: true } : item))
+                            }
                             navigate(n.link || "/inbox")
                             setShowNotif(false)
                           }}
                         >
-                          {n.text || "New notification"}
+                          {/* Type icon */}
+                          <span className="text-base flex-shrink-0 mt-0.5">
+                            { n.type === 'message' ? '💬'
+                            : n.type === 'alert' ? '⚠️'
+                            : n.type === 'banned' ? '🚫'
+                            : n.type === 'price' ? '💰'
+                            : n.type === 'favorite' ? '❤️'
+                            : '🔔' }
+                          </span>
+
+                          <div className="flex-1 min-w-0">
+                            {n.title && (
+                              <p className="font-semibold text-xs mb-0.5" style={{ color: 'var(--text-primary)' }}>{n.title}</p>
+                            )}
+                            <p className="truncate" style={{ color: n.read ? 'var(--text-muted)' : 'var(--text-primary)' }}>
+                              {n.text || "New notification"}
+                            </p>
+                            {n.createdAt && (
+                              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                                {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Delete button */}
+                          {n._id && (
+                            <button
+                              onClick={async (e) => {
+                                e.stopPropagation()
+                                await axios.delete(`/notifications/${n._id}`, { headers: { Authorization: token } })
+                                setNotifications(prev => prev.filter(item => item._id !== n._id))
+                              }}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs p-1 rounded flex-shrink-0"
+                              style={{ color: 'var(--text-muted)' }}
+                            >
+                              ✕
+                            </button>
+                          )}
+
                         </div>
                       ))}
                     </div>

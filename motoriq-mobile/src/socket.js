@@ -15,9 +15,7 @@
 
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://10.0.2.2:5000"; // Android emulator
-// const SOCKET_URL = "http://localhost:5000"; // iOS simulator
-// const SOCKET_URL = "http://192.168.1.x:5000"; // real device (your LAN IP)
+const SOCKET_URL = "https://motoriq-lk.onrender.com"; // Production
 
 export const socket = io(SOCKET_URL, {
   autoConnect: false,       // connect manually after auth
