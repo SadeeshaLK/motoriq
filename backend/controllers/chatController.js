@@ -176,3 +176,56 @@ export const markAllRead = async (req, res) => {
     res.status(500).json({ message: "Failed" })
   }
 }
+
+/* DELETE ENTIRE CHAT */
+export const deleteChat = async (req, res) => {
+  try {
+    const { chatId } = req.params
+    const userId = req.user.id
+
+    const chat = await Chat.findById(chatId)
+    if (!chat) return res.status(404).json({ message: "Chat not found" })
+
+    // Only allow chat participants to delete
+    const isParticipant = chat.users.some(u => String(u) === String(userId))
+    if (!isParticipant) return res.status(403).json({ message: "Unauthorized" })
+
+    await Chat.findByIdAndDelete(chatId)
+
+    res.json({ success: true, message: "Chat deleted" })
+  } catch (err) {
+    console.error("deleteChat error:", err)
+    res.status(500).json({ message: "Failed to delete chat" })
+  }
+}
+
+/* DELETE SINGLE MESSAGE */
+export const deleteMessage = async (req, res) => {
+  try {
+    const { chatId, messageId } = req.params
+    const userId = req.user.id
+
+    const chat = await Chat.findById(chatId)
+    if (!chat) return res.status(404).json({ message: "Chat not found" })
+
+    const message = chat.messages.id(messageId)
+    if (!message) return res.status(404).json({ message: "Message not found" })
+
+    // Only the sender can delete their own message
+    const senderId = typeof message.sender === "object" ? message.sender._id : message.sender
+    if (String(senderId) !== String(userId)) {
+      return res.status(403).json({ message: "You can only delete your own messages" })
+    }
+
+    chat.messages.pull(messageId)
+    await chat.save()
+
+    // Notify other users in the chat room
+    global.io.to(chatId).emit("messageDeleted", { messageId })
+
+    res.json({ success: true, message: "Message deleted" })
+  } catch (err) {
+    console.error("deleteMessage error:", err)
+    res.status(500).json({ message: "Failed to delete message" })
+  }
+}

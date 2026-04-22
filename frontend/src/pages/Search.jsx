@@ -36,25 +36,25 @@ export default function Search() {
 
     fetchVehicles()
 
-  },[location.search])   // ✅ IMPORTANT
+  },[location.search])
 
 
   return (
 
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
 
       <Navbar/>
 
       <div className="max-w-7xl mx-auto p-10">
 
-        <h2 className="text-2xl font-semibold mb-6">
-          Search Results for "{query}"
+        <h2 className="text-2xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>
+          Search Results for "<span style={{ color: 'var(--primary)' }}>{query}</span>"
         </h2>
 
-        {loading && <p>Loading vehicles...</p>}
+        {loading && <p style={{ color: 'var(--text-muted)' }}>Loading vehicles...</p>}
 
         {!loading && vehicles.length === 0 && (
-          <p>No vehicles found</p>
+          <p style={{ color: 'var(--text-muted)' }}>No vehicles found</p>
         )}
 
         <div className="grid grid-cols-3 gap-6">

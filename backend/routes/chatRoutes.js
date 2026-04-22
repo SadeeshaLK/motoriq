@@ -4,7 +4,9 @@ import {
   sendMessage,
   getUserChats,
   markAsRead,
-  markAllRead
+  markAllRead,
+  deleteChat,
+  deleteMessage
 } from "../controllers/chatController.js"
 import auth from "../middleware/authMiddleware.js"
 import upload from "../middleware/uploadMiddleware.js"
@@ -20,5 +22,7 @@ router.put(
   markAsRead
 )
 router.put("/read-all/:chatId", auth, markAllRead)
+router.delete("/:chatId", auth, deleteChat)
+router.delete("/:chatId/message/:messageId", auth, deleteMessage)
 
 export default router

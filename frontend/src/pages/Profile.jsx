@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "../api/axios"
 import useAuth from "../hooks/useAuth"
+import Navbar from "../components/Navbar"
 
 export default function Profile() {
 
@@ -52,74 +53,47 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-16 flex justify-center">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
+
+      <Navbar />
+
+      <div className="p-16 flex justify-center">
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-xl space-y-6"
+        className="rounded-2xl p-10 w-full max-w-xl space-y-6 backdrop-blur-md"
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}
       >
-        <h2 className="text-2xl font-bold">Edit Profile</h2>
+        <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Edit Profile</h2>
 
-        <input
-          placeholder="Full Name"
-          className="input"
-          value={form.name}
-          onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
-          }
-        />
+        <input placeholder="Full Name" className="input" value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })} />
 
-        <input
-          placeholder="Phone"
-          className="input"
-          value={form.phone}
-          onChange={(e) =>
-            setForm({ ...form, phone: e.target.value })
-          }
-        />
+        <input placeholder="Phone" className="input" value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })} />
 
-        <input
-          placeholder="Location"
-          className="input"
-          value={form.location}
-          onChange={(e) =>
-            setForm({ ...form, location: e.target.value })
-          }
-        />
+        <input placeholder="Location" className="input" value={form.location}
+          onChange={(e) => setForm({ ...form, location: e.target.value })} />
 
-        <textarea
-          placeholder="Bio"
-          className="input h-24"
-          value={form.bio}
-          onChange={(e) =>
-            setForm({ ...form, bio: e.target.value })
-          }
-        />
+        <textarea placeholder="Bio" className="input h-24" value={form.bio}
+          onChange={(e) => setForm({ ...form, bio: e.target.value })} />
 
-        <select
-          className="input"
-          value={form.role}
-          onChange={(e) =>
-            setForm({ ...form, role: e.target.value })
-          }
-        >
+        <select className="input" value={form.role}
+          onChange={(e) => setForm({ ...form, role: e.target.value })}>
           <option value="buyer">Buyer</option>
           <option value="seller">Seller</option>
         </select>
 
-        <input
-          type="file"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
+        <input type="file" onChange={(e) => setImage(e.target.files[0])} />
 
-        <button
-          disabled={loading}
-          className="w-full bg-orange-500 text-white p-4 rounded-xl"
-        >
+        <button disabled={loading}
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-xl font-semibold hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50"
+          style={{ boxShadow: '0 4px 14px var(--primary-glow)' }}>
           {loading ? "Saving..." : "Update Profile"}
         </button>
 
       </form>
+      </div>
     </div>
   )
 }

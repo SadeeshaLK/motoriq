@@ -4,10 +4,12 @@ import useAuth from "../hooks/useAuth"
 import axios from "../api/axios"
 import { socket } from "../socket"
 import { toast } from "react-hot-toast"
+import { useTheme } from "../context/ThemeContext"
 
 export default function Navbar() {
 
   const { user, isAuthenticated, logout, token } = useAuth()
+  const { theme, toggleTheme } = useTheme()
 
   const [open, setOpen] = useState(false)
   const [showNotif, setShowNotif] = useState(false)
@@ -15,8 +17,18 @@ export default function Navbar() {
   const [favoritesCount,setFavoritesCount] = useState(0)
   const [mobileOpen,setMobileOpen] = useState(false)
   const [search,setSearch] = useState("")
+  const [scrolled, setScrolled] = useState(false)
 
   const navigate = useNavigate()
+
+  const isDark = theme === "dark"
+
+  /* SCROLL EFFECT */
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -119,10 +131,19 @@ export default function Navbar() {
 
   }
 
+  const unreadCount = notifications.filter(n=>!n.read).length
 
   return (
 
-    <nav className="bg-white shadow-md border-b sticky top-0 z-50">
+    <nav
+      className="sticky top-0 z-50 transition-all duration-500"
+      style={{
+        background: scrolled ? `var(--nav-bg)` : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+        borderBottom: scrolled ? `1px solid var(--nav-border)` : 'none',
+        boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
+      }}
+    >
 
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
@@ -130,9 +151,11 @@ export default function Navbar() {
 
         <Link
           to="/"
-          className="text-2xl font-bold text-orange-500 tracking-wide"
+          className="flex items-center group"
         >
-          MotorIQ
+          <span className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            Motor<span style={{ color: 'var(--primary)' }}>IQ</span>
+          </span>
         </Link>
 
 
@@ -143,39 +166,55 @@ export default function Navbar() {
           className="hidden md:flex flex-1 mx-10 max-w-xl"
         >
 
-          <input
-            type="text"
-            placeholder="Search cars, brands..."
-            value={search}
-            onChange={(e)=>setSearch(e.target.value)}
-            className="w-full border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-
-          <button
-            className="bg-orange-500 text-white px-4 rounded-r-lg hover:bg-orange-600"
-          >
-            🔍
-          </button>
+          <div className="relative w-full group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg className="w-4 h-4 transition-colors" style={{ color: 'var(--text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search cars, brands..."
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
+              className="input !pl-11 !rounded-xl"
+            />
+          </div>
 
         </form>
 
 
         {/* RIGHT SIDE */}
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3">
+
+          {/* THEME TOGGLE */}
+          <button
+            onClick={toggleTheme}
+            className="theme-toggle"
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            <div className="theme-toggle-knob">
+              {isDark ? "🌙" : "☀️"}
+            </div>
+          </button>
 
           {!isAuthenticated && (
             <>
               <button
                 onClick={()=>navigate("/login")}
-                className="text-gray-700 hover:text-orange-500"
+                className="text-sm font-medium transition-colors duration-200 px-3 py-2 rounded-lg"
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
+                onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
               >
                 Login
               </button>
 
               <button
                 onClick={()=>navigate("/register")}
-                className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
+                className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-all duration-300"
+                style={{ boxShadow: '0 4px 14px var(--primary-glow)' }}
               >
                 Register
               </button>
@@ -190,9 +229,11 @@ export default function Navbar() {
 
               <button
                 onClick={()=>navigate("/add-vehicle")}
-                className="hidden md:block bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 font-semibold"
+                className="hidden md:flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-all duration-300"
+                style={{ boxShadow: '0 4px 14px var(--primary-glow)' }}
               >
-                + Sell Car
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                Sell Car
               </button>
 
 
@@ -200,12 +241,18 @@ export default function Navbar() {
 
               <button
                 onClick={()=>navigate("/favorites")}
-                className="relative text-xl"
+                className="relative p-2 rounded-lg transition-all duration-200"
+                style={{ color: 'var(--text-muted)' }}
+                onMouseEnter={e => e.target.style.background = 'var(--bg-glass-hover)'}
+                onMouseLeave={e => e.target.style.background = 'transparent'}
               >
-                ❤️
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
 
                 {favoritesCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full"
+                    style={{ boxShadow: '0 2px 8px var(--red-glow)' }}>
                     {favoritesCount}
                   </span>
                 )}
@@ -219,13 +266,17 @@ export default function Navbar() {
 
                 <button
                   onClick={()=>setShowNotif(!showNotif)}
-                  className="relative text-xl"
+                  className="relative p-2 rounded-lg transition-all duration-200"
+                  style={{ color: 'var(--text-muted)' }}
                 >
-                  🔔
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
 
-                  {notifications.filter(n=>!n.read).length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
-                      {notifications.filter(n=>!n.read).length}
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full animate-pulse"
+                      style={{ background: 'var(--primary)', boxShadow: '0 2px 8px var(--primary-glow)' }}>
+                      {unreadCount}
                     </span>
                   )}
 
@@ -233,28 +284,36 @@ export default function Navbar() {
 
                 {showNotif && (
 
-                  <div className="absolute right-0 mt-3 w-80 bg-white shadow-xl rounded-xl py-2 z-50 animate-fade-in">
+                  <div className="absolute right-0 mt-3 w-80 backdrop-blur-xl border rounded-xl py-2 z-50 animate-fade-in"
+                    style={{ background: 'var(--dropdown-bg)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
+
+                    <div className="px-4 py-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                      <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Notifications</p>
+                    </div>
 
                     {notifications.length === 0 && (
-                      <p className="p-3 text-sm text-gray-500">
-                        No notifications
+                      <p className="p-4 text-sm text-center" style={{ color: 'var(--text-muted)' }}>
+                        No notifications yet
                       </p>
                     )}
 
-                    {notifications.map((n,i)=>(
-                      <div
-                        key={i}
-                        className={`p-3 border-b text-sm cursor-pointer ${
-                          n.read ? "" : "bg-gray-100"
-                        }`}
-                        onClick={()=>{
-                          navigate(n.link || "/inbox")
-                          setShowNotif(false)
-                        }}
-                      >
-                        {n.text || "New notification"}
-                      </div>
-                    ))}
+                    <div className="max-h-64 overflow-y-auto">
+                      {notifications.map((n,i)=>(
+                        <div
+                          key={i}
+                          className="px-4 py-3 text-sm cursor-pointer transition-colors"
+                          style={{ color: n.read ? 'var(--text-muted)' : 'var(--text-primary)' }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
+                          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          onClick={()=>{
+                            navigate(n.link || "/inbox")
+                            setShowNotif(false)
+                          }}
+                        >
+                          {n.text || "New notification"}
+                        </div>
+                      ))}
+                    </div>
 
                   </div>
 
@@ -269,87 +328,80 @@ export default function Navbar() {
 
                 <button
                   onClick={()=>setOpen(!open)}
-                  className="flex items-center gap-3 bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition"
+                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all duration-300"
+                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)' }}
                 >
 
-                  <div className="w-8 h-8 bg-orange-500 text-white flex items-center justify-center rounded-full font-semibold">
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 text-white flex items-center justify-center rounded-lg font-semibold text-sm"
+                    style={{ boxShadow: '0 2px 8px var(--primary-glow)' }}>
                     {user?.username?.charAt(0).toUpperCase()}
                   </div>
 
-                  <span className="hidden md:block font-medium">
+                  <span className="hidden md:block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                     {user?.username}
                   </span>
+
+                  <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} style={{ color: 'var(--text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
 
                 </button>
 
 
                 {open && (
 
-                  <div className="absolute right-0 mt-3 w-60 bg-white shadow-xl rounded-xl py-2 z-50 animate-fade-in">
+                  <div className="absolute right-0 mt-3 w-64 backdrop-blur-xl border rounded-xl py-2 z-50 animate-fade-in"
+                    style={{ background: 'var(--dropdown-bg)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
-                    <div className="px-4 py-3 border-b">
+                    <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
 
-                      <p className="font-semibold text-gray-800">
+                      <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
                         {user?.username}
                       </p>
 
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
                         {user?.email}
                       </p>
 
                     </div>
 
-
-                    <button
-                      onClick={()=>navigate("/account")}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      My Account
-                    </button>
-
-
-                    <button
-                      onClick={()=>navigate("/favorites")}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      Favorites
-                    </button>
-
-
-                    <button
-                      onClick={()=>navigate("/inbox")}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      Messages
-                    </button>
-
-
-                    <button
-                      onClick={()=>navigate("/settings")}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      Settings
-                    </button>
+                    {[
+                      { key: "account",   icon: "👤", label: "My Account",  path: "/account" },
+                      { key: "favorites", icon: "❤️", label: "Favorites",   path: "/favorites" },
+                      { key: "inbox",     icon: "💬", label: "Messages",    path: "/inbox" },
+                      { key: "settings",  icon: "⚙️", label: "Settings",    path: "/settings" },
+                    ].map(item => (
+                      <button
+                        key={item.key}
+                        onClick={()=>{ navigate(item.path); setOpen(false) }}
+                        className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm transition-colors"
+                        style={{ color: 'var(--text-secondary)' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'var(--dropdown-hover)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)' }}
+                      >
+                        <span className="text-base">{item.icon}</span> {item.label}
+                      </button>
+                    ))}
 
 
                     {user?.email === "admin@motoriq.lk" && (
                       <button
-                        onClick={()=>navigate("/admin")}
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-orange-600 font-semibold"
+                        onClick={()=>{ navigate("/admin"); setOpen(false) }}
+                        className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors"
+                        style={{ color: 'var(--primary)' }}
                       >
-                        Admin Dashboard
+                        <span className="text-base">🛡</span> Admin Dashboard
                       </button>
                     )}
 
 
-                    <hr className="my-2" />
+                    <hr style={{ borderColor: 'var(--border-subtle)', margin: '8px 0' }} />
 
 
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                      className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm transition-colors"
+                      style={{ color: 'var(--red)' }}
                     >
-                      Logout
+                      <span className="text-base">🚪</span> Logout
                     </button>
 
                   </div>

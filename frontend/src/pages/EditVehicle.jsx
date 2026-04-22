@@ -241,7 +241,7 @@ setLoading(false)
 
 return(
 
-<div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700">
+<div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
 
     <Navbar />
 
@@ -249,10 +249,11 @@ return(
 
 <form
 onSubmit={handleSubmit}
-className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-4xl space-y-6"
+className="rounded-2xl p-10 w-full max-w-4xl space-y-6 backdrop-blur-md"
+style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}
 >
 
-<h2 className="text-3xl font-bold text-gray-800 mb-6">
+<h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
 Edit Vehicle
 </h2>
 
@@ -446,7 +447,7 @@ brandAndModels[form.brand].map(model=>(
 
 <div>
 
-<label className="block mb-3 font-semibold text-gray-700">
+<label className="block mb-3 font-semibold" style={{ color: 'var(--text-secondary)' }}>
 Vehicle Images (Drag to reorder)
 </label>
 
@@ -456,7 +457,7 @@ Vehicle Images (Drag to reorder)
 
 const imageUrl=img.startsWith("http")
 ?img
-:`http://localhost:5000/${img.replace(/^\/+/,"")}`
+:`https://motoriq-lk.onrender.com/${img.replace(/^\/+/,"")}`
 
 return(
 

@@ -3,20 +3,21 @@ export default function CategoryChips({ selected, setSelected }) {
   const categories = ["All", "SUV", "Sedan", "Hatchback", "Hybrid", "Electric"]
 
   return (
-    <div className="flex gap-4 mb-8">
+    <div className="flex gap-2 flex-wrap">
 
       {categories.map(category => (
         <button
           key={category}
-          onClick={() => {
-            setSelected(category)
-            setPage(1)
-          }}
-          className={`px-5 py-2 rounded-full text-sm transition
-            ${selected === category
-              ? "bg-orange-500 text-white shadow-md"
-              : "bg-gray-200 hover:bg-gray-300"
-            }`}
+          onClick={() => setSelected(category)}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+            selected === category
+              ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white"
+              : ""
+          }`}
+          style={selected === category
+            ? { boxShadow: '0 4px 14px var(--primary-glow)' }
+            : { background: 'var(--chip-bg)', border: '1px solid var(--chip-border)', color: 'var(--chip-text)' }
+          }
         >
           {category}
         </button>

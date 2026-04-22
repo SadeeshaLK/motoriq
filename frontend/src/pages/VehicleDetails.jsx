@@ -57,7 +57,7 @@ export default function VehicleDetails() {
   }, [id])
 
   if (!vehicle) {
-    return <div className="p-20 text-center">Loading...</div>
+    return <div className="p-20 text-center" style={{ color: 'var(--text-muted)' }}>Loading...</div>
   }
 
   /* ---------- IMAGE LOGIC ---------- */
@@ -79,9 +79,9 @@ export default function VehicleDetails() {
     if (image.startsWith("http")) return image
 
     if (image.startsWith("uploads/"))
-      return `http://localhost:5000/${image}`
+      return `https://motoriq-lk.onrender.com/${image}`
 
-    return `http://localhost:5000/uploads/${image}`
+    return `https://motoriq-lk.onrender.com/uploads/${image}`
   }
 
   const processedImages = images.map(img => buildImageUrl(img))
@@ -148,7 +148,7 @@ export default function VehicleDetails() {
   ]
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
 
       <Navbar />
 
@@ -160,13 +160,13 @@ export default function VehicleDetails() {
 
           <VehicleGallery images={processedImages}/>
 
-          <div className="mt-6 bg-white rounded-xl shadow p-6">
+          <div className="mt-6 rounded-xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)' }}>
 
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
               Vehicle Information
             </h2>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
 
               <div><b>Brand:</b> {vehicle.brand}</div>
               <div><b>Model:</b> {vehicle.model}</div>
@@ -188,9 +188,9 @@ export default function VehicleDetails() {
 
 <div className="mt-6">
 
-<h3 className="font-semibold mb-2">General Options</h3>
+<h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>General Options</h3>
 
-<div className="grid grid-cols-2 gap-2 text-sm">
+<div className="grid grid-cols-2 gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
 
 {generalOptionsList.map(opt=>{
 
@@ -198,7 +198,7 @@ const hasFeature = vehicle.options?.includes(opt)
 
 return(
 <div key={opt} className="flex gap-2 items-center">
-<span className={hasFeature ? "text-green-600":"text-red-500"}>
+<span style={{ color: hasFeature ? 'var(--green)' : 'var(--red)' }}>
 {hasFeature ? "✔":"✖"}
 </span>
 {opt}
@@ -216,9 +216,9 @@ return(
 
 <div className="mt-6">
 
-<h3 className="font-semibold mb-2">Safety Features</h3>
+<h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Safety Features</h3>
 
-<div className="grid grid-cols-2 gap-2 text-sm">
+<div className="grid grid-cols-2 gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
 
 {safetyOptionsList.map(opt=>{
 
@@ -226,7 +226,7 @@ const hasFeature = vehicle.safetyOptions?.includes(opt)
 
 return(
 <div key={opt} className="flex gap-2 items-center">
-<span className={hasFeature ? "text-green-600":"text-red-500"}>
+<span style={{ color: hasFeature ? 'var(--green)' : 'var(--red)' }}>
 {hasFeature ? "✔":"✖"}
 </span>
 {opt}
@@ -244,9 +244,9 @@ return(
 
 <div className="mt-6">
 
-<h3 className="font-semibold mb-2">Technology Features</h3>
+<h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Technology Features</h3>
 
-<div className="grid grid-cols-2 gap-2 text-sm">
+<div className="grid grid-cols-2 gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
 
 {techOptionsList.map(opt=>{
 
@@ -254,7 +254,7 @@ const hasFeature = vehicle.techOptions?.includes(opt)
 
 return(
 <div key={opt} className="flex gap-2 items-center">
-<span className={hasFeature ? "text-green-600":"text-red-500"}>
+<span style={{ color: hasFeature ? 'var(--green)' : 'var(--red)' }}>
 {hasFeature ? "✔":"✖"}
 </span>
 {opt}
@@ -271,7 +271,7 @@ return(
 {vehicle.additionalInfo && (
 <div className="mt-3">
 <b>Additional Information:</b>
-<p className="text-gray-600 whitespace-pre-line">
+<p className="whitespace-pre-line" style={{ color: 'var(--text-secondary)' }}>
 {vehicle.additionalInfo}
 </p>
 </div>
@@ -279,7 +279,7 @@ return(
 
 <div className="mt-4">
 <b>Location</b>
-<p className="text-gray-600">
+<p style={{ color: 'var(--text-secondary)' }}>
 {vehicle.address}, {vehicle.city}, {vehicle.district}, {vehicle.province}
 </p>
 </div>
@@ -293,30 +293,30 @@ return(
 
 <div>
 
-<h1 className="text-3xl font-bold mb-3">
+<h1 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
 {vehicle.brand} {vehicle.model} {vehicle.manufacturedYear}
 </h1>
 
-<p className="text-orange-600 text-2xl font-semibold mb-4">
+<p className="text-2xl font-semibold mb-4" style={{ color: 'var(--primary)' }}>
 LKR {vehicle.price}
 </p>
 
 {vehicle.dealScore > 20 && (
-<div className="bg-green-500 text-white px-3 py-1 rounded text-sm inline-block">
+<div className="px-3 py-1 rounded-lg text-sm inline-block font-medium text-white" style={{ background: 'var(--green)', boxShadow: '0 2px 8px var(--green-glow)' }}>
 🔥 Best Deal
 </div>
 )}
 
-<div className="text-sm text-gray-500 mb-4 mt-2">
+<div className="text-sm mb-4 mt-2" style={{ color: 'var(--text-muted)' }}>
 👁 {views} views
 </div>
 
-<div className="bg-yellow-100 p-3 rounded mb-4 text-sm">
-AI Predicted Market Price: <b>LKR {vehicle.predictedPrice}</b>
+<div className="p-3 rounded-lg mb-4 text-sm" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+🤖 AI Predicted Market Price: <b style={{ color: 'var(--text-primary)' }}>LKR {vehicle.predictedPrice}</b>
 </div>
 
-<div className="mt-2 p-4 bg-blue-100 rounded-lg text-sm">
-Estimated Monthly Cost: <b>LKR {estimatedMonthly}</b>
+<div className="mt-2 p-4 rounded-lg text-sm" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+📊 Estimated Monthly Cost: <b style={{ color: 'var(--text-primary)' }}>LKR {estimatedMonthly}</b>
 </div>
 
 
@@ -336,14 +336,15 @@ Estimated Monthly Cost: <b>LKR {estimatedMonthly}</b>
       alert("Failed to add favorite")
     }
   }}
-  className="mt-4 bg-red-100 px-4 py-2 rounded hover:bg-red-200"
+  className="mt-4 px-4 py-2 rounded-lg font-medium transition-all hover:-translate-y-0.5"
+  style={{ background: 'var(--red-glow)', color: 'var(--red)', border: '1px solid var(--red)' }}
 >
   ❤️ Add to Favorites
 </button>
 
 <button
 onClick={() => navigator.clipboard.writeText(shareLink)}
-className="ml-3 bg-gray-200 px-4 py-2 rounded"
+className="ml-3 px-4 py-2 rounded" style={{ background: 'var(--chip-bg)', color: 'var(--text-secondary)' }}
 >
 🔗 Share
 </button>
@@ -351,18 +352,19 @@ className="ml-3 bg-gray-200 px-4 py-2 rounded"
 
 {/* SELLER */}
 
-<div className="mt-6 p-4 bg-gray-50 rounded-lg">
+<div className="mt-6 p-4 rounded-lg" style={{ background: 'var(--bg-glass)' }}>
 
-<h3 className="font-semibold mb-2">Seller</h3>
+<h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Seller</h3>
 
 <p
-className="cursor-pointer text-blue-600"
+className="cursor-pointer font-medium"
+style={{ color: 'var(--blue)' }}
 onClick={()=>navigate(`/seller/${vehicle.user?._id}`)}
 >
 {vehicle.user?.name}
 </p>
 
-<p className="text-sm text-gray-500">
+<p className="text-sm" style={{ color: 'var(--text-muted)' }}>
 Rating: {vehicle.user?.rating || 0} ⭐
 </p>
 
@@ -398,7 +400,7 @@ WhatsApp
 {/* AI GRAPH */}
 
 <div className="mt-8">
-<h3 className="font-semibold mb-3">AI Cost Prediction</h3>
+<h3 className="font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>AI Cost Prediction</h3>
 <CostChart vehicle={vehicle}/>
 </div>
 
@@ -418,26 +420,27 @@ WhatsApp
 
 <div className="max-w-7xl mx-auto px-16">
 
-<h2 className="text-2xl font-bold mb-4">Reviews</h2>
+<h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Reviews</h2>
 
 {reviews.map(r=>(
-<div key={r._id} className="bg-white p-4 rounded shadow mb-3">
+<div key={r._id} className="p-4 rounded mb-3" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-sm)' }}>
 ⭐ {r.rating} — {r.comment}
 </div>
 ))}
 
-<div className="bg-white p-4 rounded shadow">
+<div className="p-4 rounded" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-sm)' }}>
 
 <textarea
 placeholder="Write review"
 value={reviewText}
 onChange={(e)=>setReviewText(e.target.value)}
-className="w-full border p-2 rounded"
+className="input w-full"
 />
 
 <button
 onClick={submitReview}
-className="mt-3 bg-orange-500 text-white px-4 py-2 rounded"
+className="mt-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:-translate-y-0.5 transition-all"
+style={{ boxShadow: '0 2px 8px var(--primary-glow)' }}
 >
 Submit Review
 </button>
@@ -453,7 +456,7 @@ Submit Review
 
 <div className="max-w-7xl mx-auto px-16 pb-20 mt-16">
 
-<h2 className="text-2xl font-bold mb-6">
+<h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
 Recommended Vehicles
 </h2>
 
@@ -482,7 +485,7 @@ setCompareList={()=>{}}
 
 <div className="max-w-7xl mx-auto px-16 pb-20 mt-16">
 
-<h2 className="text-2xl font-bold mb-6">
+<h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
 Similar Vehicles
 </h2>
 

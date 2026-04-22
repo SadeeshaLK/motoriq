@@ -132,13 +132,13 @@ export default function VehicleChat({ vehicle }) {
 
 
   return (
-    <div className="mt-6 bg-white p-4 rounded shadow">
+    <div className="mt-6 p-4 rounded" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)' }}>
 
       <h3 className="font-semibold mb-3">
         Chat with Seller
       </h3>
 
-      <div className="h-48 overflow-y-auto border p-3 mb-3">
+      <div className="h-48 overflow-y-auto p-3 mb-3 rounded-lg" style={{ border: '1px solid var(--border-subtle)', background: 'var(--bg-glass)' }}>
 
         {chat.messages.map((m, i) => {
 
@@ -155,11 +155,11 @@ export default function VehicleChat({ vehicle }) {
               className={`mb-2 ${mine ? "text-right" : ""}`}
             >
               <span
-                className={`inline-block px-3 py-2 rounded ${
-                  mine
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200"
-                }`}
+                className="inline-block px-3 py-2 rounded"
+                style={mine
+                  ? { background: 'var(--primary)', color: 'white' }
+                  : { background: 'var(--bg-glass)', color: 'var(--text-primary)' }
+                }
               >
                 {m.text}
               </span>
@@ -176,7 +176,8 @@ export default function VehicleChat({ vehicle }) {
       <div className="mb-3">
         <button
           onClick={sendQuickMessage}
-          className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
+          className="text-sm px-3 py-1 rounded-full transition"
+          style={{ background: 'var(--chip-bg)', color: 'var(--text-secondary)', border: '1px solid var(--chip-border)' }}
         >
           Hi! Is this still available?
         </button>
@@ -188,13 +189,13 @@ export default function VehicleChat({ vehicle }) {
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="flex-1 border p-2 rounded"
+          className="input flex-1"
           placeholder="Type a message..."
         />
 
         <button
           onClick={sendMessage}
-          className="bg-orange-500 text-white px-4 rounded"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg font-medium"
         >
           Send
         </button>

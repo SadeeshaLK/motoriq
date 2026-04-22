@@ -234,7 +234,7 @@ const handleDrop = (index) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
 
     <Navbar />
 
@@ -242,10 +242,11 @@ const handleDrop = (index) => {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-4xl space-y-6"
+        className="rounded-2xl p-10 w-full max-w-4xl space-y-6 backdrop-blur-md"
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}
       >
 
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
           Post New Vehicle
         </h2>
 

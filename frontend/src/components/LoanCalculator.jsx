@@ -14,7 +14,7 @@ export default function LoanCalculator({ price }) {
     (Math.pow(1 + monthlyInterest, months) - 1)
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow">
+    <div className="p-6 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)' }}>
 
       <h3 className="font-bold mb-3">Loan Calculator</h3>
 

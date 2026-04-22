@@ -14,7 +14,6 @@ export default function Account() {
   const [myAds, setMyAds] = useState([])
   const [favorites, setFavorites] = useState([])
 
-  // 🔥 UPDATED STATE
   const [profileData, setProfileData] = useState({
     username: "",
     email: "",
@@ -42,7 +41,6 @@ export default function Account() {
         })
         setFavorites(favRes.data)
 
-        // 🔥 UPDATED PROFILE LOAD
         setProfileData({
           username: user?.username || "",
           email: user?.email || "",
@@ -101,10 +99,13 @@ export default function Account() {
   const menuItem = (key, label, icon) => (
     <li
       onClick={() => setActiveTab(key)}
-      className={`cursor-pointer flex items-center gap-2 px-3 py-2 rounded-lg transition 
-        ${activeTab === key
-          ? "bg-orange-500 text-white"
-          : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"}`}
+      className={`cursor-pointer flex items-center gap-2 px-3 py-2.5 rounded-lg transition text-sm font-medium`}
+      style={activeTab === key
+        ? { background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', color: 'white', boxShadow: '0 2px 8px var(--primary-glow)' }
+        : { color: 'var(--text-secondary)' }
+      }
+      onMouseEnter={e => { if (activeTab !== key) e.currentTarget.style.background = 'var(--bg-glass-hover)' }}
+      onMouseLeave={e => { if (activeTab !== key) e.currentTarget.style.background = 'transparent' }}
     >
       <span>{icon}</span>
       <span>{label}</span>
@@ -112,22 +113,23 @@ export default function Account() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
 
       <Navbar />
 
       <div className="p-10">
 
-        <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg grid grid-cols-4">
+        <div className="max-w-6xl mx-auto rounded-xl grid grid-cols-4 overflow-hidden"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
           {/* SIDEBAR */}
-          <div className="border-r p-6">
+          <div className="p-6" style={{ borderRight: '1px solid var(--border-subtle)' }}>
 
-            <h2 className="font-bold text-lg mb-6">
+            <h2 className="font-bold text-lg mb-6" style={{ color: 'var(--text-primary)' }}>
               Welcome {user?.username}
             </h2>
 
-            <ul className="space-y-3 font-medium">
+            <ul className="space-y-2">
 
               {menuItem("ads", "My Ads", "🚗")}
               {menuItem("favorites", "Favorites", "❤️")}
@@ -139,7 +141,8 @@ export default function Account() {
                   logout()
                   navigate("/")
                 }}
-                className="cursor-pointer flex items-center gap-2 px-3 py-2 rounded-lg text-red-500 hover:bg-red-50"
+                className="cursor-pointer flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition"
+                style={{ color: 'var(--red)' }}
               >
                 🚪 Logout
               </li>
@@ -154,10 +157,10 @@ export default function Account() {
             {/* MY ADS */}
             {activeTab === "ads" && (
               <>
-                <h3 className="text-xl font-semibold mb-6">My Ads</h3>
+                <h3 className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>My Ads</h3>
 
                 {myAds.length === 0 ? (
-                  <p className="text-gray-500">
+                  <p style={{ color: 'var(--text-muted)' }}>
                     You currently have no vehicles posted.
                   </p>
                 ) : (
@@ -179,7 +182,8 @@ export default function Account() {
                               e.stopPropagation()
                               navigate(`/edit-vehicle/${vehicle._id}`)
                             }}
-                            className="flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition"
+                            className="flex items-center gap-1 text-xs px-3 py-1 rounded-lg font-medium transition"
+                            style={{ background: 'var(--blue-glow)', color: 'var(--blue)' }}
                           >
                             ✏️ Edit
                           </button>
@@ -189,7 +193,8 @@ export default function Account() {
                               e.stopPropagation()
                               deleteAd(vehicle._id)
                             }}
-                            className="flex items-center gap-1 text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition"
+                            className="flex items-center gap-1 text-xs px-3 py-1 rounded-lg font-medium transition"
+                            style={{ background: 'var(--red-glow)', color: 'var(--red)' }}
                           >
                             🗑 Delete
                           </button>
@@ -206,10 +211,10 @@ export default function Account() {
             {/* FAVORITES */}
             {activeTab === "favorites" && (
               <>
-                <h3 className="text-xl font-semibold mb-6">Favorites</h3>
+                <h3 className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Favorites</h3>
 
                 {favorites.length === 0 ? (
-                  <p className="text-gray-500">
+                  <p style={{ color: 'var(--text-muted)' }}>
                     You have no favorite vehicles.
                   </p>
                 ) : (
@@ -226,7 +231,8 @@ export default function Account() {
 
                         <button
                           onClick={() => removeFavorite(vehicle._id)}
-                          className="mt-2 text-sm text-red-600 hover:underline px-2">
+                          className="mt-2 text-sm px-2 font-medium transition"
+                          style={{ color: 'var(--red)' }}>
                           Remove from Favorites
                         </button>
 
@@ -240,53 +246,25 @@ export default function Account() {
             {/* EDIT PROFILE */}
             {activeTab === "edit" && (
               <>
-                <h3 className="text-xl font-semibold mb-6">Edit Profile</h3>
+                <h3 className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Edit Profile</h3>
 
                 <div className="space-y-4 max-w-md">
 
-                  <input
-                    type="text"
-                    value={profileData.username}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, username: e.target.value })
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
+                  <input type="text" value={profileData.username} className="input"
+                    onChange={(e) => setProfileData({ ...profileData, username: e.target.value })} />
 
-                  <input
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, email: e.target.value })
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
+                  <input type="email" value={profileData.email} className="input"
+                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })} />
 
-                  {/* 🔥 NEW FIELD */}
-                  <input
-                    type="text"
-                    placeholder="Phone Number"
-                    value={profileData.phone}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, phone: e.target.value })
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
+                  <input type="text" placeholder="Phone Number" value={profileData.phone} className="input"
+                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} />
 
-                  {/* 🔥 NEW FIELD */}
-                  <input
-                    type="text"
-                    placeholder="City"
-                    value={profileData.city}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, city: e.target.value })
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
+                  <input type="text" placeholder="City" value={profileData.city} className="input"
+                    onChange={(e) => setProfileData({ ...profileData, city: e.target.value })} />
 
-                  <button
-                    onClick={updateProfile}
-                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
+                  <button onClick={updateProfile}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all duration-300"
+                    style={{ boxShadow: '0 4px 14px var(--primary-glow)' }}>
                     Save Changes
                   </button>
 
@@ -297,33 +275,19 @@ export default function Account() {
             {/* CHANGE PASSWORD */}
             {activeTab === "password" && (
               <>
-                <h3 className="text-xl font-semibold mb-6">Change Password</h3>
+                <h3 className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Change Password</h3>
 
                 <div className="space-y-4 max-w-md">
 
-                  <input
-                    type="password"
-                    placeholder="Current Password"
-                    value={passwordData.currentPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, currentPassword: e.target.value })
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
+                  <input type="password" placeholder="Current Password" value={passwordData.currentPassword} className="input"
+                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} />
 
-                  <input
-                    type="password"
-                    placeholder="New Password"
-                    value={passwordData.newPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, newPassword: e.target.value })
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
+                  <input type="password" placeholder="New Password" value={passwordData.newPassword} className="input"
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} />
 
-                  <button
-                    onClick={changePassword}
-                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
+                  <button onClick={changePassword}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all duration-300"
+                    style={{ boxShadow: '0 4px 14px var(--primary-glow)' }}>
                     Update Password
                   </button>
 

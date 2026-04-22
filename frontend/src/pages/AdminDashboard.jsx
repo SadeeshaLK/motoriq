@@ -199,7 +199,7 @@ const exportVehiclesCSV = () => {
   }))
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
       <Toaster />
       <Navbar />
 
@@ -240,7 +240,7 @@ const exportVehiclesCSV = () => {
         <div className="grid grid-cols-2 gap-10">
 
           {/* PIE */}
-          <div className="bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg">
+          <div className="backdrop-blur-lg p-6 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
             <h3 className="mb-4 font-semibold">Buyer vs Seller</h3>
 
             <ResponsiveContainer width="100%" height={300}>
@@ -255,7 +255,7 @@ const exportVehiclesCSV = () => {
           </div>
 
           {/* BAR */}
-          <div className="bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg">
+          <div className="backdrop-blur-lg p-6 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
             <h3 className="mb-4 font-semibold">Vehicle Growth</h3>
 
             <ResponsiveContainer width="100%" height={300}>
@@ -271,7 +271,7 @@ const exportVehiclesCSV = () => {
         </div>
 
         {/* 🔥 LINE CHART */}
-        <div className="mt-10 bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg">
+        <div className="mt-10 backdrop-blur-lg p-6 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
           <h3 className="mb-4 font-semibold">Growth Trend</h3>
 
           <ResponsiveContainer width="100%" height={300}>
@@ -285,7 +285,7 @@ const exportVehiclesCSV = () => {
         </div>
 
         {/* ================= ADMIN CONTROLS ================= */}
-        <div className="mt-16 bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg">
+        <div className="mt-16 backdrop-blur-lg p-6 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
           <h2 className="text-xl font-semibold mb-4">Admin Controls</h2>
 
@@ -530,7 +530,7 @@ const exportVehiclesCSV = () => {
 {userModalOpen && selectedUser && (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-    <div className="bg-white p-8 rounded-2xl shadow-xl w-[400px] relative">
+    <div className="p-8 rounded-2xl w-[400px] relative" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
       {/* ❌ CLOSE */}
       <button
@@ -591,7 +591,7 @@ const exportVehiclesCSV = () => {
 {vehicleModalOpen && selectedVehicle && (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-    <div className="bg-white p-8 rounded-2xl shadow-xl w-[600px] max-h-[90vh] overflow-y-auto relative">
+    <div className="p-8 rounded-2xl w-[600px] max-h-[90vh] overflow-y-auto relative" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
       {/* ❌ CLOSE */}
       <button
@@ -677,10 +677,10 @@ const exportVehiclesCSV = () => {
             imageUrl = processedImg
           }
           else if (processedImg.startsWith("uploads/")) {
-            imageUrl = `http://localhost:5000/${processedImg}`
+            imageUrl = `https://motoriq-lk.onrender.com/${processedImg}`
           }
           else {
-            imageUrl = `http://localhost:5000/uploads/${processedImg}`
+            imageUrl = `https://motoriq-lk.onrender.com/uploads/${processedImg}`
           }
         }
 

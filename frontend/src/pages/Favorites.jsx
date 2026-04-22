@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import axios from "../api/axios"
 import useAuth from "../hooks/useAuth"
-import VehicleCard from "../components/VehicleCard"
 import Navbar from "../components/Navbar"
+import VehicleCard from "../components/VehicleCard"
 
 export default function Favorites() {
 
@@ -34,7 +34,7 @@ export default function Favorites() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>
 
       {/* NAVBAR */}
       <Navbar />
@@ -44,11 +44,11 @@ export default function Favorites() {
         {/* HEADER */}
         <div className="flex justify-between items-center mb-8">
 
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
             ❤️ Your Favorite Vehicles
           </h2>
 
-          <span className="text-gray-500 text-sm">
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
             {vehicles.length} saved
           </span>
 
@@ -57,7 +57,7 @@ export default function Favorites() {
 
         {/* LOADING */}
         {loading && (
-          <p className="text-center text-gray-500">
+          <p className="text-center" style={{ color: 'var(--text-muted)' }}>
             Loading favorites...
           </p>
         )}
@@ -67,17 +67,18 @@ export default function Favorites() {
         {!loading && vehicles.length === 0 && (
           <div className="text-center py-20">
 
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>
               No Favorites Yet
             </h3>
 
-            <p className="text-gray-500 mb-6">
+            <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
               Start adding vehicles to your favorites ❤️
             </p>
 
             <button
               onClick={() => window.location.href = "/"}
-              className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg font-semibold hover:-translate-y-0.5 transition-all duration-300"
+              style={{ boxShadow: '0 4px 14px var(--primary-glow)' }}
             >
               Browse Vehicles
             </button>
