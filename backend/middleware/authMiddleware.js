@@ -32,7 +32,7 @@ export const protect = async (req, res, next) => {
 }
 
 export const adminOnly = (req, res, next) => {
-  if (!req.user || req.user.email !== "admin@motoriq.lk") {
+  if (!req.user || !req.user.isAdmin) {
     return res.status(403).json({ message: "Admin access only" })
   }
   next()
