@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Platform,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -76,7 +77,7 @@ export default function AdminDashboard() {
 
   const fetchPendingBoosts = async (t) => {
     try {
-      const res = await API.get("/admin/boost-requests", { headers: { Authorization: t } });
+      const res = await API.get("/admin/boosts/pending", { headers: { Authorization: t } });
       setPendingBoosts(res.data);
     } catch (e) { console.log(e); }
   };
@@ -161,7 +162,7 @@ export default function AdminDashboard() {
         style: action === "Approve" ? "default" : "destructive",
         onPress: async () => {
           try {
-            await API.put(`/admin/boost-requests/${id}/${action.toLowerCase()}`, {}, { headers: { Authorization: token } });
+            await API.put(`/admin/boosts/${id}/${action.toLowerCase()}`, {}, { headers: { Authorization: token } });
             setPendingBoosts(pendingBoosts.filter((v) => v._id !== id));
             Alert.alert("Success", `Boost request ${action.toLowerCase()}d!`);
             fetchVehicles(token); // Refresh vehicle status
@@ -362,8 +363,8 @@ export default function AdminDashboard() {
                   <Text style={s.listTitle}>{v.brand} {v.model}</Text>
                   <Text style={s.listSubtitle}>Seller: {v.user?.name || "Unknown"}</Text>
                   <Text style={s.listDetails}>LKR {v.price?.toLocaleString()}</Text>
-                  {v.depositSlip && (
-                     <Text style={[s.listDetails, { color: "#2563eb", marginTop: 4 }]} onPress={() => router.push(`https://motoriq-lk.onrender.com/${v.depositSlip}`)}>
+                  {v.boostSlip && (
+                     <Text style={[s.listDetails, { color: "#2563eb", marginTop: 4 }]} onPress={() => Linking.openURL(`https://motoriq-lk.onrender.com${v.boostSlip}`)}>
                         🔗 View Deposit Slip
                      </Text>
                   )}

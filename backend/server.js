@@ -19,12 +19,20 @@ import notificationRoutes from "./routes/notificationRoutes.js"
 
 dotenv.config()
 
+import fs from "fs"
+
 const app = express()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, "uploads")
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true })
+}
+
+app.use("/uploads", express.static(uploadDir))
 
 // Middleware
 app.use(cors())
