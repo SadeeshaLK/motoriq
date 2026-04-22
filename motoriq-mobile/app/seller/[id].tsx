@@ -108,7 +108,7 @@ export default function SellerProfile() {
     try {
       const userRes = await API.get(`/users/${id}`);
       setSeller(userRes.data);
-      
+
       const vehicleRes = await API.get(`/vehicles/user/${id}`);
       setVehicles(vehicleRes.data);
     } catch (err: any) {
@@ -183,7 +183,7 @@ export default function SellerProfile() {
       <Animated.FlatList
         data={vehicles}
         keyExtractor={(item) => item._id}
-        contentContainerStyle={{ paddingBottom: 130 }}
+        contentContainerStyle={{ paddingBottom: 160 }}
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -227,7 +227,7 @@ export default function SellerProfile() {
                 </View>
 
                 <Text style={s.heroName}>{seller.username || seller.name}</Text>
-                <Text style={s.heroTagline}>Trusted seller on AutoLK 🚗</Text>
+                <Text style={s.heroTagline}>Trusted seller on MotorIQ.lk 🚗</Text>
 
                 {/* Stat pills */}
                 <View style={s.statRow}>
@@ -282,7 +282,7 @@ export default function SellerProfile() {
               <VehicleCard
                 vehicle={item}
                 monthlyBudget={50000}
-                addToCompare={() => {}}
+                addToCompare={() => { }}
               />
             </View>
           </FadeIn>
@@ -410,6 +410,7 @@ const s = StyleSheet.create({
     shadowRadius: 14,
     elevation: 8,
     zIndex: 10,
+    marginTop: -30,
   },
   infoGrid: {
     flexDirection: "row", flexWrap: "wrap",

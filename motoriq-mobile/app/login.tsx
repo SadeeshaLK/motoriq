@@ -121,7 +121,7 @@ export default function LoginRegister() {
         <View style={s.hero}>
           <View style={s.blob1} />
           <View style={s.blob2} />
-          <Text style={s.heroLogo}>🚗 AutoLK</Text>
+          <Text style={s.heroLogo}>🚗 MotorIQ.lk</Text>
           <Text style={s.heroTagline}>Sri Lanka's smartest car marketplace</Text>
         </View>
 
@@ -184,7 +184,7 @@ function LoginForm({ router, switchMode }) {
   return (
     <View>
       <Text style={s.cardTitle}>Welcome Back 👋</Text>
-      <Text style={s.cardSub}>Login to your AutoLK account</Text>
+      <Text style={s.cardSub}>Login to your MotorIQ.lk account</Text>
 
       {error ? <View style={s.errorBox}><Text style={s.errorText}>⚠️ {error}</Text></View> : null}
 
@@ -334,7 +334,7 @@ function RegisterForm({ router, switchMode }) {
   return (
     <View>
       <Text style={s.cardTitle}>Create Account ✨</Text>
-      <Text style={s.cardSub}>Join AutoLK — it's free</Text>
+      <Text style={s.cardSub}>Join MotorIQ.lk — it's free</Text>
 
       {error ? <View style={s.errorBox}><Text style={s.errorText}>⚠️ {error}</Text></View> : null}
 

@@ -150,7 +150,7 @@ function LoanCalculator({ price }) {
   const monthly =
     principal > 0 && monthlyRate > 0 && n > 0
       ? (principal * monthlyRate * Math.pow(1 + monthlyRate, n)) /
-        (Math.pow(1 + monthlyRate, n) - 1)
+      (Math.pow(1 + monthlyRate, n) - 1)
       : 0;
 
   return (
@@ -250,21 +250,28 @@ export default function VehicleDetails() {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out this ${vehicle.brand} ${vehicle.model} on AutoLK! LKR ${vehicle.price?.toLocaleString()}`,
+        message: `Check out this ${vehicle.brand} ${vehicle.model} on MotorIQ.lk! LKR ${vehicle.price?.toLocaleString()}`,
         title: `${vehicle.brand} ${vehicle.model}`,
       });
     } catch { }
   };
 
   const callSeller = () => {
-    const phone = vehicle.user?.phone || "94770000000";
+    const rawPhone = vehicle.user?.phone || "";
+    const phone = rawPhone.replace(/\s+/g, "");
+    if (!phone) return Alert.alert("Error", "Seller phone number not available");
     Linking.openURL(`tel:${phone}`);
   };
 
   const whatsapp = () => {
-    const phone = vehicle.user?.phone || "94770000000";
+    const rawPhone = vehicle.user?.phone || "";
+    const phone = rawPhone.replace(/\s+/g, "");
+    if (!phone) return Alert.alert("Error", "Seller WhatsApp not available");
+    
+    // Format for international (replace leading 0 with 94 for SL)
+    const formatted = phone.startsWith("0") ? `94${phone.slice(1)}` : phone;
     const msg = encodeURIComponent(`I'm interested in your ${vehicle.brand} ${vehicle.model}`);
-    Linking.openURL(`https://wa.me/${phone}?text=${msg}`);
+    Linking.openURL(`https://wa.me/${formatted}?text=${msg}`);
   };
 
   const startChat = async (sendGreeting = false) => {
@@ -345,7 +352,7 @@ export default function VehicleDetails() {
     <View style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 130 }}
+        contentContainerStyle={{ paddingBottom: 160 }}
         showsVerticalScrollIndicator={false}
       >
 
@@ -429,10 +436,14 @@ export default function VehicleDetails() {
             <TouchableOpacity onPress={() => router.push(`/seller/${vehicle.user?._id}`)}>
               <Text style={s.sellerName}>{vehicle.user?.name || "Unknown Seller"}</Text>
             </TouchableOpacity>
-            <Text style={s.sellerRating}>
-              {"★".repeat(Math.round(vehicle.user?.rating || 0))}{"☆".repeat(5 - Math.round(vehicle.user?.rating || 0))}
-              {"  "}{vehicle.user?.rating || 0} / 5
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <Text style={s.sellerRating}>
+                {"★".repeat(Math.round(vehicle.user?.rating || 0))}{"☆".repeat(5 - Math.round(vehicle.user?.rating || 0))}
+              </Text>
+              <Text style={{ color: '#9ca3af', fontSize: 13, marginLeft: 8 }}>
+                {vehicle.user?.rating || 0} / 5
+              </Text>
+            </View>
 
             {vehicle.user?.settings?.privacy?.showPhone ? (
               <View style={s.contactRow}>
@@ -646,7 +657,7 @@ export default function VehicleDetails() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
                 {recommendedVehicles.map((v) => (
                   <View key={v._id} style={{ width: SCREEN_W * 0.72 }}>
-                    <VehicleCard vehicle={v} monthlyBudget={50000} addToCompare={() => {}} />
+                    <VehicleCard vehicle={v} monthlyBudget={50000} addToCompare={() => { }} />
                   </View>
                 ))}
               </ScrollView>
@@ -662,7 +673,7 @@ export default function VehicleDetails() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
                 {similarVehicles.map((v) => (
                   <View key={v._id} style={{ width: SCREEN_W * 0.72 }}>
-                    <VehicleCard vehicle={v} monthlyBudget={50000} addToCompare={() => {}} />
+                    <VehicleCard vehicle={v} monthlyBudget={50000} addToCompare={() => { }} />
                   </View>
                 ))}
               </ScrollView>

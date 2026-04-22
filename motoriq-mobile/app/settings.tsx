@@ -100,12 +100,14 @@ export default function Settings() {
         <View style={[s.iconCircle, { backgroundColor: t.isDark ? "rgba(255,255,255,0.1)" : "#f3f4f6" }]}>
           <Text style={s.iconText}>{icon}</Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={[s.rowLabel, { color: t.textPrimary }]}>{label}</Text>
-          {sublabel && <Text style={[s.rowSub, { color: t.textMuted }]}>{sublabel}</Text>}
+        <View style={{ flex: 1, paddingRight: 8 }}>
+          <Text style={[s.rowLabel, { color: t.textPrimary }]} numberOfLines={1}>{label}</Text>
+          {sublabel && <Text style={[s.rowSub, { color: t.textMuted }]} numberOfLines={2}>{sublabel}</Text>}
         </View>
       </View>
-      {children}
+      <View style={{ minWidth: 50, alignItems: 'flex-end' }}>
+        {children}
+      </View>
     </TouchableOpacity>
   );
 
@@ -220,8 +222,8 @@ const s = StyleSheet.create({
   sectionTitle: { fontSize: 13, fontWeight: "800", textTransform: "uppercase", marginBottom: 10, letterSpacing: 1, marginLeft: 4 },
   card: { borderRadius: 20, overflow: "hidden", shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
 
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 16, borderBottomWidth: 1 },
-  rowLeft: { flexDirection: "row", alignItems: "center", gap: 14 },
+  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1 },
+  rowLeft: { flexDirection: "row", alignItems: "center", gap: 14, flex: 1 },
   iconCircle: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
   iconText: { fontSize: 18 },
   rowLabel: { fontSize: 15, fontWeight: "700" },
