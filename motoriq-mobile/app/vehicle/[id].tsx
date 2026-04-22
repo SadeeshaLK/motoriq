@@ -185,6 +185,7 @@ export default function VehicleDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
+  const [currentUser, setCurrentUser] = useState(null);
   const [vehicle, setVehicle] = useState(null);
   const [similarVehicles, setSimilarVehicles] = useState([]);
   const [recommendedVehicles, setRecommendedVehicles] = useState([]);
@@ -196,6 +197,14 @@ export default function VehicleDetails() {
   const [favLoading, setFavLoading] = useState(false);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const stored = await AsyncStorage.getItem("user");
+      if (stored) setCurrentUser(JSON.parse(stored));
+    };
+    getUser();
+  }, []);
 
   // ── Feature lists ──
   const generalOptionsList = ["Leather Seats", "Air Conditioning", "Rear Camera", "Parking Sensors", "Alloy Wheels", "Power Steering", "Power Windows", "Sunroof"];
@@ -445,7 +454,7 @@ export default function VehicleDetails() {
               </Text>
             </View>
 
-            {vehicle.user?.settings?.privacy?.showPhone ? (
+            {(vehicle.user?.settings?.privacy?.showPhone || (currentUser && currentUser._id === vehicle.user?._id)) ? (
               <View style={s.contactRow}>
                 <TouchableOpacity style={s.callBtn} onPress={callSeller}>
                   <Text style={s.callBtnText}>📞 Call</Text>

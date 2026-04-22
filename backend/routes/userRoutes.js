@@ -40,8 +40,22 @@ router.post("/favorite/:vehicleId", auth, toggleFavorite)
 
 /* ================= SELLER PUBLIC PROFILE ================= */
 
+// We use an optional auth check here to allow the owner to see their own private profile
 router.get("/:id", async (req, res) => {
   try {
+    // Try to get current user from token if present (optional)
+    const authHeader = req.headers.authorization;
+    let currentUserId = null;
+    if (authHeader) {
+      try {
+        const jwt = (await import("jsonwebtoken")).default;
+        const decoded = jwt.verify(authHeader, process.env.JWT_SECRET);
+        currentUserId = decoded.id;
+      } catch (e) {
+        // invalid token, ignore
+      }
+    }
+
     const user = await User.findById(req.params.id)
       .select("-password")
 
@@ -49,7 +63,10 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json("User not found")
 
     // Check privacy settings
-    if (user.settings?.privacy?.publicProfile === false) {
+    // Allow access if profile is public OR if the requesting user is the owner
+    const isOwner = currentUserId && currentUserId === user._id.toString();
+    
+    if (user.settings?.privacy?.publicProfile === false && !isOwner) {
       return res.status(403).json({ 
         message: "This profile is private",
         isPrivate: true 

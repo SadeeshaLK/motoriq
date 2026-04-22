@@ -64,14 +64,26 @@ export default function Settings() {
     // 2. Sync to backend
     try {
       const token = await AsyncStorage.getItem("token");
+      
+      // Calculate latest state for payload (don't rely on async state)
+      const updatedNotifications = section === "notifications" 
+        ? { ...notifications, [key]: value } 
+        : notifications;
+        
+      const updatedPrivacy = section === "privacy" 
+        ? { ...privacy, [key]: value } 
+        : privacy;
+
       const payload = {
         settings: {
-          notifications: section === "notifications" ? { ...notifications, [key]: value } : notifications,
-          privacy: section === "privacy" ? { ...privacy, [key]: value } : privacy
+          notifications: updatedNotifications,
+          privacy: updatedPrivacy
         }
       };
+      
       await API.put("/users/profile", payload, { headers: { Authorization: token } });
     } catch (err) {
+      console.error("Save error:", err);
       Alert.alert("Error", "Failed to save settings");
     }
   };

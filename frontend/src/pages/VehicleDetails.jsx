@@ -15,7 +15,7 @@ import { formatRelativeDate } from "../utils/formatDate"
 export default function VehicleDetails() {
 
   const { id } = useParams()
-  const { token } = useAuth()
+  const { token, user: currentUser } = useAuth()
   const navigate = useNavigate()
 
   const [vehicle, setVehicle] = useState(null)
@@ -381,7 +381,7 @@ onClick={()=>navigate(`/seller/${vehicle.user?._id}`)}
 Rating: {vehicle.user?.rating || 0} ⭐
 </p>
 
-{vehicle.user?.settings?.privacy?.showPhone ? (
+{vehicle.user?.settings?.privacy?.showPhone || (currentUser && (currentUser.id === vehicle.user?._id || currentUser._id === vehicle.user?._id)) ? (
 <div className="flex gap-3 mt-3">
 
 <a
