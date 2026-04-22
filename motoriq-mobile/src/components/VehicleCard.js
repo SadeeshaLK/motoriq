@@ -8,7 +8,7 @@ import { useTheme } from "../context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { formatRelativeDate } from "../utils/formatDate";
 
-export default function VehicleCard({
+function VehicleCard({
   vehicle,
   compareList,
   setCompareList,
