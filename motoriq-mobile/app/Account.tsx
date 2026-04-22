@@ -17,6 +17,9 @@ import { useRouter } from "expo-router";
 import API from "../src/services/api";
 import VehicleCard from "../src/components/VehicleCard";
 import BottomBar from "../src/components/BottomBar";
+import ThemeToggle from "../src/components/ThemeToggle";
+import NotificationBell from "../src/components/NotificationBell";
+import { useTheme } from "../src/context/ThemeContext";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -104,6 +107,7 @@ function EmptyState({ emoji, message }) {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Account() {
   const router = useRouter();
+  const { theme: t } = useTheme();
 
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -259,7 +263,7 @@ export default function Account() {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <View style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+    <View style={{ flex: 1, backgroundColor: t.bgBody }}>
 
       <ScrollView
         style={{ flex: 1 }}
@@ -269,7 +273,11 @@ export default function Account() {
       >
 
         {/* ══ HERO / PROFILE HEADER ══════════════════════════════════════ */}
-        <View style={s.hero}>
+        <View style={[s.hero, { backgroundColor: t.isDark ? t.bgCard : "#111" }]}>
+          <View style={{ position: "absolute", top: Platform.OS === "ios" ? 60 : 44, right: 16, zIndex: 10, flexDirection: "row", gap: 10 }}>
+            <NotificationBell />
+            <ThemeToggle />
+          </View>
           <View style={s.blob1} />
           <View style={s.blob2} />
 

@@ -26,6 +26,11 @@ router.put("/users/ban/:id", protect, adminOnly, toggleBanUser)
 router.get("/vehicles", protect, adminOnly, getAllVehicles)
 router.delete("/vehicles/:id", protect, adminOnly, deleteVehicle)
 
+import { getPendingBoosts, approveBoost, rejectBoost } from "../controllers/adminController.js"
+router.get("/boosts/pending", protect, adminOnly, getPendingBoosts)
+router.put("/boosts/:id/approve", protect, adminOnly, approveBoost)
+router.put("/boosts/:id/reject", protect, adminOnly, rejectBoost)
+
 // NOTIFICATIONS
 router.post("/notify", protect, adminOnly, sendAdminNotification)
 

@@ -92,10 +92,14 @@ export default function VehicleDetails() {
 
   /* ---------- SELLER CONTACT ---------- */
 
-  const phone = vehicle.user?.phone || "94770000000"
+  const rawPhone = vehicle.user?.phone || "0770000000"
+  const phone = rawPhone.replace(/\s+/g, "") // remove any spaces
+  
+  // Format WhatsApp number (Replace leading 0 with 94 for Sri Lanka)
+  const whatsappPhone = phone.startsWith("0") ? `94${phone.slice(1)}` : phone
 
   const whatsappLink =
-    `https://wa.me/${phone}?text=I'm interested in your vehicle ${vehicle.brand} ${vehicle.model}`
+    `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Hi, I'm interested in your vehicle: ${vehicle.brand} ${vehicle.model}`)}`
 
   const shareLink = window.location.href
 

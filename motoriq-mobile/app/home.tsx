@@ -18,7 +18,10 @@ import { useRouter } from "expo-router";
 import VehicleCard from "../src/components/VehicleCard";
 import { sriLanka } from "../src/data/sriLankaLocations";
 import { brandAndModels } from "../src/data/brandAndModels";
-import BottomBar from "../src/components/BottomBar"; // ← adjust path to match your project
+import BottomBar from "../src/components/BottomBar";
+import ThemeToggle from "../src/components/ThemeToggle";
+import NotificationBell from "../src/components/NotificationBell";
+import { useTheme } from "../src/context/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -62,6 +65,7 @@ function SelectButton({ value, placeholder, onPress }) {
 // ─── Home Screen ──────────────────────────────────────────────────────────────
 export default function Home() {
   const router = useRouter();
+  const { theme: t } = useTheme();
 
   const [vehicles, setVehicles] = useState([]);
   const [category, setCategory] = useState("All");
@@ -171,7 +175,7 @@ export default function Home() {
   const listBottomPad = compareList.length > 0 ? 210 : 120;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+    <View style={{ flex: 1, backgroundColor: t.bgBody }}>
 
       {/* ── Pickers ── */}
       {activePicker && activePicker !== "sortBy" && (
@@ -226,12 +230,18 @@ export default function Home() {
         ListHeaderComponent={() => (
           <View>
             {/* Hero */}
-            <View style={styles.hero}>
+            <View style={[styles.hero, { backgroundColor: t.isDark ? t.bgCard : "#111" }]}>
               <View style={styles.heroBlobTop} />
               <View style={styles.heroBlobBottom} />
-              <View style={styles.heroContent}>
-                <Text style={styles.heroTitle}>Find Your{"\n"}Perfect Car 🚗</Text>
-                <Text style={styles.heroSub}>AI-powered recommendations based on{"\n"}price, fuel, maintenance & trust.</Text>
+              <View style={[styles.heroContent, { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }]}>
+                <View>
+                  <Text style={styles.heroTitle}>Find Your{"\n"}Perfect Car 🚗</Text>
+                  <Text style={styles.heroSub}>AI-powered recommendations based on{"\n"}price, fuel, maintenance & trust.</Text>
+                </View>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <NotificationBell />
+                  <ThemeToggle />
+                </View>
               </View>
 
               {/* Filter card */}

@@ -61,6 +61,10 @@ export const updateProfile = async (req, res) => {
     user.phone = req.body.phone || user.phone
     user.city = req.body.city || user.city
 
+    if(req.body.settings) {
+       user.settings = req.body.settings
+    }
+
     await user.save()
 
     res.json({
@@ -70,12 +74,24 @@ export const updateProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        city: user.city
+        city: user.city,
+        settings: user.settings
       }
     })
 
   } catch (error) {
     res.status(500).json({ message: "Profile update failed" })
+  }
+}
+
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await Vehicle.deleteMany({ user: userId });
+    await User.findByIdAndDelete(userId);
+    res.json({ message: "Account deleted successfully" })
+  } catch(error) {
+    res.status(500).json({ message: "Delete account failed"})
   }
 }
 

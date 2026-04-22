@@ -54,9 +54,9 @@
   --dropdown-bg: rgba(255, 255, 255, 0.97);
   --dropdown-hover: rgba(0, 0, 0, 0.04);
 
-  --hero-from: #faf8f5;
-  --hero-via: #fff7ed;
-  --hero-to: #faf8f5;
+  --hero-from: #fbe7ce;
+  --hero-via: #fadcc8;
+  --hero-to: #fca636;
 
   --chip-bg: rgba(0, 0, 0, 0.04);
   --chip-border: rgba(0, 0, 0, 0.06);
@@ -64,12 +64,12 @@
   --chip-hover-bg: rgba(0, 0, 0, 0.08);
   --chip-hover-text: #334155;
 
-  --card-hover-shadow: 0 12px 40px rgba(249, 115, 22, 0.08), 0 4px 16px rgba(0,0,0,0.06);
-  --card-img-overlay: linear-gradient(to top, rgba(255,255,255,0.9), transparent, transparent);
+  --card-hover-shadow: 0 12px 40px rgba(249, 115, 22, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --card-img-overlay: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent, transparent);
   --badge-bg: rgba(0, 0, 0, 0.04);
   --badge-border: rgba(0, 0, 0, 0.06);
 
-  --skeleton-bg: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
+  --skeleton-bg: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 25%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.04) 75%);
 
   --compare-bg: rgba(255, 255, 255, 0.95);
 }
@@ -133,12 +133,12 @@
   --chip-hover-bg: rgba(255, 255, 255, 0.08);
   --chip-hover-text: #f1f5f9;
 
-  --card-hover-shadow: 0 8px 40px rgba(249, 115, 22, 0.15), 0 8px 32px rgba(0,0,0,0.5);
+  --card-hover-shadow: 0 8px 40px rgba(249, 115, 22, 0.15), 0 8px 32px rgba(0, 0, 0, 0.5);
   --card-img-overlay: linear-gradient(to top, #111827, transparent, transparent);
   --badge-bg: rgba(255, 255, 255, 0.04);
   --badge-border: rgba(255, 255, 255, 0.06);
 
-  --skeleton-bg: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%);
+  --skeleton-bg: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.02) 75%);
 
   --compare-bg: rgba(30, 41, 59, 0.95);
 }
@@ -163,38 +163,84 @@ body {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-glass);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
 
 /* ============================================================
    ANIMATIONS
    ============================================================ */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-.animate-fadeIn  { animation: fadeIn 0.6s ease forwards; }
-.animate-fadeUp  { animation: fadeUp 0.8s ease forwards; }
-.animate-fade-in { animation: slideDown 0.3s ease forwards; }
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.animate-fade-in {
+  animation: slideDown 0.3s ease forwards;
+}
 
 .animate-shimmer {
   background: var(--skeleton-bg);
@@ -210,8 +256,8 @@ body {
 .theme-transition *::before,
 .theme-transition *::after {
   transition: background 0.35s ease, background-color 0.35s ease,
-              color 0.35s ease, border-color 0.35s ease,
-              box-shadow 0.35s ease !important;
+    color 0.35s ease, border-color 0.35s ease,
+    box-shadow 0.35s ease !important;
 }
 
 /* ============================================================
@@ -231,7 +277,9 @@ body {
   transition: all 0.3s ease;
 }
 
-.input::placeholder { color: var(--text-muted); }
+.input::placeholder {
+  color: var(--text-muted);
+}
 
 .input:focus {
   border-color: var(--primary);
@@ -239,7 +287,10 @@ body {
   background: var(--bg-input-focus);
 }
 
-.input:disabled { opacity: 0.5; cursor: not-allowed; }
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 select.input {
   appearance: none;
@@ -254,7 +305,10 @@ select.input option {
   color: var(--text-primary);
 }
 
-textarea.input { resize: vertical; min-height: 80px; }
+textarea.input {
+  resize: vertical;
+  min-height: 80px;
+}
 
 /* ============================================================
    FLOATING LABELS
@@ -270,8 +324,8 @@ textarea.input { resize: vertical; min-height: 80px; }
   pointer-events: none;
 }
 
-.peer:focus + .floating-label,
-.peer:not(:placeholder-shown) + .floating-label {
+.peer:focus+.floating-label,
+.peer:not(:placeholder-shown)+.floating-label {
   top: -8px;
   font-size: 11px;
   background: var(--bg-secondary);
@@ -324,23 +378,53 @@ textarea.input { resize: vertical; min-height: 80px; }
    THEMED BACKGROUNDS (use these in JSX)
    ============================================================ */
 
-.t-page       { background: var(--bg-body) !important; color: var(--text-primary); }
-.t-card       { background: var(--bg-card) !important; border: 1px solid var(--border-glass); }
-.t-glass      { background: var(--bg-glass) !important; }
-.t-secondary  { background: var(--bg-secondary) !important; }
+.t-page {
+  background: var(--bg-body) !important;
+  color: var(--text-primary);
+}
 
-.t-text       { color: var(--text-primary) !important; }
-.t-text-2     { color: var(--text-secondary) !important; }
-.t-text-muted { color: var(--text-muted) !important; }
+.t-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-glass);
+}
 
-.t-border     { border-color: var(--border-subtle) !important; }
+.t-glass {
+  background: var(--bg-glass) !important;
+}
+
+.t-secondary {
+  background: var(--bg-secondary) !important;
+}
+
+.t-text {
+  color: var(--text-primary) !important;
+}
+
+.t-text-2 {
+  color: var(--text-secondary) !important;
+}
+
+.t-text-muted {
+  color: var(--text-muted) !important;
+}
+
+.t-border {
+  border-color: var(--border-subtle) !important;
+}
 
 /* ============================================================
    CHECKBOX / RANGE / FILE
    ============================================================ */
 
-input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
-input[type="range"]    { accent-color: var(--primary); }
+input[type="checkbox"] {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+input[type="range"] {
+  accent-color: var(--primary);
+}
 
 input[type="file"] {
   background: var(--bg-glass);

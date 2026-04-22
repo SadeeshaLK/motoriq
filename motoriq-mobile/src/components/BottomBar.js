@@ -14,7 +14,7 @@ const TAB_ITEMS = [
   { key: "home",          route: "/home",          label: "Browse",   icon: "🚗" },
   { key: "search",        route: "/search",         label: "Search",   icon: "🔍" },
   { key: "post",          route: "/Addvehicle",     label: "Post Ad",  icon: null,  isCta: true },
-  { key: "notifications", route: "/Notifications",  label: "Alerts",   icon: "🔔" },
+  { key: "chat",          route: "/Chatwindow",     label: "Chat",     icon: "💬" },
   { key: "account",       route: "/Account",        label: "Account",  icon: "👤" },
 ];
 

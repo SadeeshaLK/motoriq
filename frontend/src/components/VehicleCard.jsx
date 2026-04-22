@@ -78,13 +78,18 @@ export default function VehicleCard({
         {/* Image overlay */}
         <div className="absolute inset-0" style={{ background: 'var(--card-img-overlay)', opacity: 0.6 }} />
 
-        {/* DEAL SCORE */}
-        {vehicle.dealScore > 20 && (
-          <div className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg"
+        {/* DEAL SCORE OR PREMIUM */}
+        {vehicle.isPremium ? (
+          <div className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg flex items-center gap-1"
+            style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)', backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(234,88,12,0.4)' }}>
+            🌟 PREMIUM
+          </div>
+        ) : vehicle.dealScore > 20 ? (
+          <div className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg flex items-center gap-1"
             style={{ background: 'rgba(34,197,94,0.9)', backdropFilter: 'blur(4px)' }}>
             🔥 BEST DEAL
           </div>
-        )}
+        ) : null}
 
         {/* IMAGE COUNT */}
         {vehicle.images?.length > 1 && (

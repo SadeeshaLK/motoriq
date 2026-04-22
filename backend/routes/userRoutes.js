@@ -33,6 +33,9 @@ router.get("/favorites", protect, getFavorites)
 router.put("/profile", protect, updateProfile)
 router.put("/change-password", protect, changePassword)
 
+import { deleteAccount } from "../controllers/userController.js"
+router.delete("/account", protect, deleteAccount)
+
 router.post("/favorite/:vehicleId", auth, toggleFavorite)
 
 /* ================= SELLER PUBLIC PROFILE ================= */

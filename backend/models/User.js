@@ -23,6 +23,18 @@ city: {
     location: String,
     profileImage: String,
 
+    settings: {
+      notifications: {
+        email: { type: Boolean, default: true },
+        push: { type: Boolean, default: false },
+        marketing: { type: Boolean, default: true }
+      },
+      privacy: {
+        publicProfile: { type: Boolean, default: true },
+        showPhone: { type: Boolean, default: false }
+      }
+    },
+
     otp: String,
     otpExpires: Date,
 

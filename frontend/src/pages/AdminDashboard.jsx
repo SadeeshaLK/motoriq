@@ -33,6 +33,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([])
   const [vehicles, setVehicles] = useState([])
   const [flaggedVehicles, setFlaggedVehicles] = useState([])
+  const [pendingBoosts, setPendingBoosts] = useState([])
 
   const [activeTab, setActiveTab] = useState("overview")
   const [search, setSearch] = useState("")
@@ -80,10 +81,20 @@ export default function AdminDashboard() {
     }
   }
 
+  const fetchPendingBoosts = async () => {
+    try {
+      const res = await axios.get("/admin/boosts/pending", { headers: { Authorization: token } })
+      setPendingBoosts(res.data)
+    } catch {
+      toast.error("Failed to load pending boosts")
+    }
+  }
+
   useEffect(() => {
     fetchStats()
     fetchUsers()
     fetchVehicles()
+    fetchPendingBoosts()
     const interval = setInterval(fetchStats, 15000)
     return () => clearInterval(interval)
   }, [token])
@@ -220,6 +231,21 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleBoostAction = async (id, action) => {
+    try {
+      if(action === "approve") {
+         await axios.put(`/admin/boosts/${id}/approve`, {}, { headers: { Authorization: token } })
+         toast.success("Boost approved! Ad is now premium.")
+      } else {
+         await axios.put(`/admin/boosts/${id}/reject`, {}, { headers: { Authorization: token } })
+         toast.success("Boost rejected.")
+      }
+      fetchPendingBoosts()
+    } catch(err) {
+      toast.error("Failed to process boost")
+    }
+  }
+
   /* ===== EARLY RETURN ===== */
 
   if (!stats) return (
@@ -256,6 +282,7 @@ export default function AdminDashboard() {
     { key: "users", label: "👥 Users" },
     { key: "vehicles", label: "🚗 Vehicles" },
     { key: "fraud", label: `🚨 Fraud (${flaggedVehicles.length})` },
+    { key: "boosts", label: `🌟 Boosts (${pendingBoosts.length})` },
     { key: "notify", label: "📢 Broadcast" },
   ]
 
@@ -604,6 +631,42 @@ export default function AdminDashboard() {
               </button>
 
             </div>
+          </div>
+        )}
+
+        {/* ===== TAB: BOOSTS ===== */}
+        {activeTab === "boosts" && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>🌟 Pending Premium Boosts</h2>
+            {pendingBoosts.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)' }}>No pending boost requests right now.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {pendingBoosts.map(boost => (
+                  <div key={boost._id} className="p-4 rounded-xl flex flex-col justify-between" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)' }}>
+                    <div>
+                      <h4 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{boost.brand} {boost.model}</h4>
+                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}><b>Seller:</b> {boost.user?.username}</p>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}><b>Email:</b> {boost.user?.email}</p>
+                      
+                      <p className="text-sm font-semibold mt-4 mb-2" style={{ color: 'var(--text-primary)' }}>Deposited Slip:</p>
+                      {boost.boostSlip ? (
+                        <a href={`https://motoriq-lk.onrender.com${boost.boostSlip}`} target="_blank" rel="noopener noreferrer">
+                          <img src={`https://motoriq-lk.onrender.com${boost.boostSlip}`} alt="Bank Slip" className="w-full h-40 object-cover rounded-lg border border-gray-300 dark:border-gray-600 mb-4 cursor-pointer hover:opacity-80 transition-opacity" />
+                        </a>
+                      ) : (
+                        <p className="text-xs text-red-500 mb-4">No slip uploaded</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-4">
+                      <button onClick={() => handleBoostAction(boost._id, "approve")} className="flex-1 bg-green-500 text-white font-bold py-2.5 rounded-lg hover:bg-green-600 transition shadow-lg">Approve</button>
+                      <button onClick={() => handleBoostAction(boost._id, "reject")} className="flex-1 bg-red-500 text-white font-bold py-2.5 rounded-lg hover:bg-red-600 transition shadow-lg">Reject</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

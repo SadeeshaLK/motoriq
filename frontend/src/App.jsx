@@ -16,6 +16,7 @@ import EditVehicle from "./pages/EditVehicle"
 import Search from "./pages/Search"
 import Compare from "./pages/Compare"
 import SellerProfile from "./pages/SellerProfile"
+import Settings from "./pages/Settings"
 
 
 function ProtectedRoute({ children }) {
@@ -47,6 +48,12 @@ export default function App() {
           path="/add-vehicle"
           element={<ProtectedRoute>
             <AddVehicle />
+          </ProtectedRoute>} />
+
+        <Route
+          path="/settings"
+          element={<ProtectedRoute>
+            <Settings />
           </ProtectedRoute>} />
 
       </Routes>

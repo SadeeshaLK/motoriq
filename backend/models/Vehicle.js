@@ -79,9 +79,23 @@ const vehicleSchema = new mongoose.Schema(
 
     /* USER */
     user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
+    /* BOOST PREMIUM STATUS */
+    isPremium: {
+      type: Boolean,
+      default: false
+    },
+    boostStatus: {
+      type: String,
+      enum: ["none", "pending", "active", "rejected"],
+      default: "none"
+    },
+    boostSlip: {
+      type: String
     }
 
   },

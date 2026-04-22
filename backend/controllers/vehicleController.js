@@ -158,7 +158,7 @@ export const getAllVehicles = async (req, res) => {
     console.log("Incoming Query Params:", req.query)
 
     const vehicles = await Vehicle.find()
-      .sort({ createdAt: -1 })
+      .sort({ isPremium: -1, createdAt: -1 })
 
     res.json(vehicles)
   } catch (err) {
@@ -300,7 +300,7 @@ export const searchVehicles = async (req, res) => {
 
     const vehicles = await Vehicle.find(query)
       .populate("user", "name role rating profileImage")
-      .sort({ createdAt: -1 })
+      .sort({ isPremium: -1, createdAt: -1 })
 
     res.json(vehicles)
 
@@ -470,5 +470,34 @@ export const getVehiclesByUser = async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: "Failed to fetch vehicles" })
+  }
+}
+
+export const boostVehicle = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id)
+
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" })
+    }
+
+    if (vehicle.user.toString() !== req.user.id) {
+       return res.status(401).json({ message: "Unauthorized to boost this vehicle" })
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Deposit slip image is required" })
+    }
+
+    vehicle.boostStatus = "pending"
+    vehicle.boostSlip = `/uploads/${req.file.filename}`
+
+    await vehicle.save()
+
+    res.json({ message: "Boost request submitted successfully", vehicle })
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Boost request failed" })
   }
 }

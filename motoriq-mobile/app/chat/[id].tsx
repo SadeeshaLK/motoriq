@@ -13,6 +13,7 @@ import {
   Animated,
   Dimensions,
   Image,
+  Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -66,7 +67,7 @@ function TypingIndicator({ name }: { name: string }) {
 }
 
 // ─── Swipeable Message Bubble ──────────────────────────────────────────────
-function MessageBubble({ message, isOwn, userId, onReply }: any) {
+function MessageBubble({ message, isOwn, userId, onReply, onDelete }: any) {
   const seen = message.readBy?.some((id: any) => String(id) !== String(userId));
   const time = new Date(message.createdAt || Date.now()).toLocaleTimeString([], {
     hour: "2-digit",
@@ -83,14 +84,16 @@ function MessageBubble({ message, isOwn, userId, onReply }: any) {
     ]).start();
   }, []);
 
-  const renderRightActions = (progress: any, dragX: any) => {
+  const swipeableRef = useRef<Swipeable>(null);
+
+  const renderLeftActions = (progress: any, dragX: any) => {
     const trans = dragX.interpolate({
-      inputRange: [-100, 0],
-      outputRange: [0, 100],
+      inputRange: [0, 80],
+      outputRange: [-30, 0],
       extrapolate: "clamp",
     });
     return (
-      <Animated.View style={[s.replyAction, { transform: [{ translateX: trans }] }]}>
+      <Animated.View style={[s.replyAction, { justifyContent: 'center', marginLeft: 15, transform: [{ translateX: trans }] }]}>
         <View style={s.replyIconWrap}>
           <Text style={s.replyIcon}>↩️</Text>
         </View>
@@ -100,10 +103,23 @@ function MessageBubble({ message, isOwn, userId, onReply }: any) {
 
   const handleSwipeOpen = () => {
     onReply(message);
+    setTimeout(() => {
+      swipeableRef.current?.close();
+    }, 100);
+  };
+
+  const handleLongPress = () => {
+    if (isOwn) {
+      Alert.alert("Message", "", [
+        { text: "Copy", onPress: () => { /* copy skipped */ } },
+        { text: "Delete", style: "destructive", onPress: () => onDelete(message._id) },
+        { text: "Cancel", style: "cancel" }
+      ]);
+    }
   };
 
   const renderBubbleContent = () => (
-    <View style={[s.bubble, isOwn ? s.bubbleOwn : s.bubbleOther]}>
+    <TouchableOpacity activeOpacity={0.8} onLongPress={handleLongPress} style={[s.bubble, isOwn ? s.bubbleOwn : s.bubbleOther]}>
       {/* Reply Reference Section */}
       {message.replyTo && (
         <View style={[s.replyRef, isOwn ? s.replyRefOwn : s.replyRefOther]}>
@@ -130,23 +146,21 @@ function MessageBubble({ message, isOwn, userId, onReply }: any) {
           </Text>
         )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
-    <Animated.View style={[{ opacity: fade, transform: [{ translateY: slide }] }, s.bubbleRow, isOwn ? s.bubbleRowOwn : s.bubbleRowOther]}>
-      {isOwn ? (
-        renderBubbleContent()
-      ) : (
-        <Swipeable
-          renderRightActions={renderRightActions}
-          onSwipeableRightOpen={handleSwipeOpen}
-          friction={2}
-        >
-          {renderBubbleContent()}
-        </Swipeable>
-      )}
-    </Animated.View>
+    <Swipeable
+      ref={swipeableRef}
+      renderLeftActions={renderLeftActions}
+      onSwipeableLeftOpen={handleSwipeOpen}
+      friction={2}
+      overshootLeft={false}
+    >
+      <Animated.View style={[{ opacity: fade, transform: [{ translateY: slide }] }, s.bubbleRow, isOwn ? s.bubbleRowOwn : s.bubbleRowOther]}>
+        {renderBubbleContent()}
+      </Animated.View>
+    </Swipeable>
   );
 }
 
@@ -207,7 +221,10 @@ export default function ChatConversation() {
     if (!user) return;
 
     const onReceive = (msg: any) => {
-      setMessages((prev) => [...prev, msg]);
+      setMessages((prev) => {
+        if (prev.some((m) => String(m._id) === String(msg._id))) return prev;
+        return [...prev, msg];
+      });
       // If we are currently in the chat, emit that we read the new message
       if (chat) {
         socket.emit("messageRead", { chatId: chat._id, messageId: msg._id, userId: user.id });
@@ -324,7 +341,7 @@ export default function ChatConversation() {
       if (newMsg) {
         setMessages((prev) => {
           // Check if not already in array (socket might have pushed it)
-          if (prev.some(m => m._id === newMsg._id)) return prev;
+          if (prev.some(m => String(m._id) === String(newMsg._id))) return prev;
           return [...prev, newMsg];
         });
         socket.emit("sendMessage", { chatId: chat._id, message: newMsg });
@@ -355,6 +372,33 @@ export default function ChatConversation() {
       return String(uid) !== String(user.id);
     });
     return typeof other === "object" && other?.name ? other.name : "Chat";
+  };
+
+  const deleteMessage = async (msgId: string) => {
+    try {
+      const t = await AsyncStorage.getItem("token");
+      await API.delete(`/chat/${chat._id}/message/${msgId}`, { headers: { Authorization: t } });
+      setMessages(p => p.filter(m => m._id !== msgId));
+    } catch (err) {
+      Alert.alert("Failed to delete message");
+    }
+  };
+
+  const showContextMenu = () => {
+    Alert.alert("Options", "", [
+      { text: "🚗 View Vehicle Listing", onPress: () => { if(chat?.vehicle?._id) router.push(`/vehicle/${chat.vehicle._id}`) } },
+      { text: "🗑 Delete Conversation", style: "destructive", onPress: () => {
+          Alert.alert("Confirm", "Delete this conversation?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Delete", style: "destructive", onPress: async () => {
+                const t = await AsyncStorage.getItem("token");
+                await API.delete(`/chat/${chat._id}`, { headers: { Authorization: t } });
+                router.back();
+            }}
+          ]);
+      }},
+      { text: "Cancel", style: "cancel" }
+    ]);
   };
 
   if (loading) {
@@ -388,6 +432,9 @@ export default function ChatConversation() {
                 {online && <Text style={{ color: "#22c55e", fontSize: 11 }}>● Online</Text>}
               </View>
             </View>
+            <TouchableOpacity style={s.backBtn} onPress={showContextMenu}>
+              <Text style={[s.backBtnText, { fontSize: 22, marginTop: -6 }]}>⋮</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Messages */}
@@ -403,11 +450,12 @@ export default function ChatConversation() {
               const isOwn = String(sid) === String(user?.id);
               return (
                 <MessageBubble
-                  key={m._id || i}
+                  key={m._id ? `${m._id}-${i}` : `fallback-${i}`}
                   message={m}
                   isOwn={isOwn}
                   userId={user?.id}
                   onReply={(msg: any) => setReplyingTo(msg)}
+                  onDelete={deleteMessage}
                 />
               );
             })}

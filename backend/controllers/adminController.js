@@ -259,3 +259,65 @@ export const sendAdminNotification = async (req, res) => {
     res.status(500).json({ message: "Failed to send notifications" })
   }
 }
+
+/* GET PENDING BOOSTS */
+export const getPendingBoosts = async (req, res) => {
+  try {
+    const boosts = await Vehicle.find({ boostStatus: "pending" })
+      .populate("user", "username email phone")
+      .sort({ updatedAt: -1 })
+    res.json(boosts)
+  } catch(err) {
+    res.status(500).json({ message: "Failed to fetch pending boosts" })
+  }
+}
+
+/* APPROVE BOOST */
+export const approveBoost = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id)
+    if(!vehicle) return res.status(404).json({ message: "Vehicle not found" })
+    
+    vehicle.boostStatus = "active"
+    vehicle.isPremium = true
+    await vehicle.save()
+
+    // Notify seller
+    await Notification.create({
+      user: vehicle.user,
+      type: "alert",
+      title: "Boost Approved! 🌟",
+      text: `Your listing "${vehicle.brand} ${vehicle.model}" is now PREMIUM.`,
+      link: "/account"
+    })
+
+    res.json({ message: "Boost approved", vehicle })
+  } catch(err) {
+    res.status(500).json({ message: "Failed to approve boost" })
+  }
+}
+
+/* REJECT BOOST */
+export const rejectBoost = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id)
+    if(!vehicle) return res.status(404).json({ message: "Vehicle not found" })
+    
+    vehicle.boostStatus = "rejected"
+    vehicle.isPremium = false
+    await vehicle.save()
+
+    // Notify seller
+    await Notification.create({
+      user: vehicle.user,
+      type: "alert",
+      title: "Boost Rejected",
+      text: `Your boost request for "${vehicle.brand} ${vehicle.model}" was rejected. Please contact support.`,
+      link: "/account"
+    })
+
+    res.json({ message: "Boost rejected", vehicle })
+  } catch(err) {
+    res.status(500).json({ message: "Failed to reject boost" })
+  }
+}

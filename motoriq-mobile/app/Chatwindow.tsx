@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Animated,
   Image,
+  Alert,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -62,7 +63,7 @@ function FadeInItem({ children, delay = 0 }: any) {
 }
 
 // ─── Chat list item ──────────────────────────────────────────────────────────
-function ChatItem({ chat, userId, onPress, index }: any) {
+function ChatItem({ chat, userId, onPress, onLongPress, index }: any) {
   // Get other user
   const otherUser = chat.users?.find((u: any) => {
     const uid = typeof u === "object" ? u._id : u;
@@ -109,6 +110,7 @@ function ChatItem({ chat, userId, onPress, index }: any) {
       <TouchableOpacity
         style={[styles.chatItem, unreadCount > 0 && styles.chatItemUnread]}
         onPress={onPress}
+        onLongPress={onLongPress}
         activeOpacity={0.7}
       >
         <View style={styles.chatAvatarWrap}>
@@ -250,6 +252,19 @@ export default function ChatList() {
   const onRefresh = () => fetchChats(true);
   const openChat = (chat: any) => router.push(`/chat/${chat._id}`);
 
+  const deleteChat = (chatId: string) => {
+    Alert.alert("Delete Conversation", "This cannot be undone.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: async () => {
+        try {
+          const t = await AsyncStorage.getItem("token");
+          await API.delete(`/chat/${chatId}`, { headers: { Authorization: t } });
+          setChats(p => p.filter(c => c._id !== chatId));
+        } catch {}
+      }}
+    ]);
+  };
+
   const totalUnread = user ? chats.reduce((sum, chat) => {
     const count = chat.messages?.filter((m: any) => {
       const sid = typeof m.sender === "object" ? m.sender._id : m.sender;
@@ -296,7 +311,13 @@ export default function ChatList() {
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6600" colors={["#ff6600"]} />}
           renderItem={({ item, index }) => (
-            <ChatItem chat={item} userId={user?.id} onPress={() => openChat(item)} index={index} />
+            <ChatItem 
+              chat={item} 
+              userId={user?.id} 
+              onPress={() => openChat(item)} 
+              onLongPress={() => deleteChat(item._id)} 
+              index={index} 
+            />
           )}
           ListFooterComponent={() => (
             <View style={styles.footer}>

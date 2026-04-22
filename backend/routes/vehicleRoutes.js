@@ -12,12 +12,16 @@ import {
   getRecommendedVehicles,
   deleteVehicle,
   updateVehicle,
-  getVehiclesByUser
+  getVehiclesByUser,
+  boostVehicle
 } from "../controllers/vehicleController.js"
 
 const router = express.Router()
 
 router.get("/my", protect, getMyVehicles)
+
+/* BOOST VEHICLE */
+router.post("/:id/boost", protect, upload.single("slipImage"), boostVehicle)
 
 router.post(
   "/",
