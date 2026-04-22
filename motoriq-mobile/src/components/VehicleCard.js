@@ -31,13 +31,23 @@ export default function VehicleCard({
   }
 
   // IMAGE LOGIC
-  let imageUrl = "https://via.placeholder.com/300";
-  if (vehicle.images && vehicle.images.length > 0) {
+  let imageUrl = "https://via.placeholder.com/600x400?text=No+Image";
+  if (vehicle.images && vehicle.images.length > 0 && vehicle.images[0]) {
     let firstImage = vehicle.images[0];
     if (firstImage.startsWith("/")) firstImage = firstImage.slice(1);
-    imageUrl = firstImage.startsWith("http")
-      ? firstImage
-      : `https://motoriq-lk.onrender.com/${firstImage}`;
+    
+    const baseUrl = "https://motoriq-lk.onrender.com";
+    let finalPath = "";
+    if (firstImage.startsWith("http")) {
+      imageUrl = firstImage;
+    } else {
+      if (firstImage.startsWith("uploads/")) {
+        finalPath = firstImage;
+      } else {
+        finalPath = `uploads/${firstImage}`;
+      }
+      imageUrl = `${baseUrl}/${encodeURI(finalPath)}`;
+    }
   }
 
   const cardContent = (
@@ -91,7 +101,7 @@ export default function VehicleCard({
 
         {/* Badges row */}
         <View style={styles.badgeRow}>
-          <Chip label={`🛣 ${vehicle.mileage?.toLocaleString()} km`} t={t} />
+          <Chip label={`🛣 ${(vehicle.mileage || 0).toLocaleString()} km`} t={t} />
           {vehicle.transmission && <Chip label={`⚙ ${vehicle.transmission}`} t={t} />}
           {vehicle.fuelType && <Chip label={`⛽ ${vehicle.fuelType}`} t={t} />}
           {vehicle.engineCapacity && <Chip label={`🔧 ${vehicle.engineCapacity}cc`} t={t} />}

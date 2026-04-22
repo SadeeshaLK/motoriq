@@ -32,9 +32,14 @@ const BASE_URL = "https://motoriq-lk.onrender.com";
 const buildImageUrl = (img) => {
   if (!img) return null;
   if (img.startsWith("http")) return img;
-  const clean = img.startsWith("/") ? img.slice(1) : img;
-  if (clean.startsWith("uploads/")) return `${BASE_URL}/${clean}`;
-  return `${BASE_URL}/uploads/${clean}`;
+  
+  let image = img;
+  if (image.startsWith("/")) image = image.slice(1);
+
+  if (image.startsWith("uploads/")) {
+    return `${BASE_URL}/${encodeURI(image)}`;
+  }
+  return `${BASE_URL}/uploads/${encodeURI(image)}`;
 };
 
 // ─── Section header ───────────────────────────────────────────────────────────
@@ -511,7 +516,7 @@ export default function VehicleDetails() {
               <InfoRow label="Transmission" value={vehicle.transmission} />
               <InfoRow label="Fuel Type" value={vehicle.fuelType} />
               <InfoRow label="Engine" value={vehicle.engineCapacity ? `${vehicle.engineCapacity} cc` : null} />
-              <InfoRow label="Mileage" value={vehicle.mileage ? `${vehicle.mileage?.toLocaleString()} km` : null} />
+              <InfoRow label="Mileage" value={(vehicle.mileage !== undefined && vehicle.mileage !== null) ? `${vehicle.mileage.toLocaleString()} km` : "N/A"} />
             </View>
 
             {/* Location */}
