@@ -116,9 +116,10 @@ export default function SellerProfile() {
       const vehicleRes = await API.get(`/vehicles/user/${id}`);
       setVehicles(vehicleRes.data);
     } catch (err: any) {
-      console.error("SellerProfile fetch error:", err);
       if (err.response?.status === 403) {
         setIsPrivate(true);
+      } else {
+        console.warn("SellerProfile fetch error:", err.message);
       }
     } finally {
       setLoading(false);
