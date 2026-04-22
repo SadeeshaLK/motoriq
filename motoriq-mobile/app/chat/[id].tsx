@@ -201,6 +201,7 @@ export default function ChatConversation() {
           setChat(found);
           setMessages(Array.isArray(found.messages) ? found.messages : []);
           socket.emit("joinChat", found._id);
+          socket.emit("joinUser", user.id);
         }
       } catch (err) {
         console.error("Failed to fetch chat:", err);
@@ -227,7 +228,12 @@ export default function ChatConversation() {
       });
       // If we are currently in the chat, emit that we read the new message
       if (chat) {
-        socket.emit("messageRead", { chatId: chat._id, messageId: msg._id, userId: user.id });
+        socket.emit("messageRead", { 
+          chatId: chat._id, 
+          messageId: msg._id, 
+          userId: user.id,
+          participants: chat.users.map((u: any) => typeof u === "object" ? u._id : u)
+        });
       }
     };
 
@@ -344,7 +350,11 @@ export default function ChatConversation() {
           if (prev.some(m => String(m._id) === String(newMsg._id))) return prev;
           return [...prev, newMsg];
         });
-        socket.emit("sendMessage", { chatId: chat._id, message: newMsg });
+        socket.emit("sendMessage", { 
+          chatId: chat._id, 
+          message: newMsg,
+          participants: chat.users.map((u: any) => typeof u === "object" ? u._id : u)
+        });
       }
     } catch (err) {
       console.error("Failed to send message", err);

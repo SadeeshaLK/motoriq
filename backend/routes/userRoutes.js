@@ -48,6 +48,14 @@ router.get("/:id", async (req, res) => {
     if (!user)
       return res.status(404).json("User not found")
 
+    // Check privacy settings
+    if (user.settings?.privacy?.publicProfile === false) {
+      return res.status(403).json({ 
+        message: "This profile is private",
+        isPrivate: true 
+      })
+    }
+
     res.json(user)
   } catch (error) {
     res.status(500).json("Failed to fetch seller")

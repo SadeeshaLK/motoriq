@@ -12,6 +12,7 @@ export default function SellerProfile() {
   const [seller, setSeller] = useState(null)
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isPrivate, setIsPrivate] = useState(false)
 
   useEffect(() => {
     fetchSeller()
@@ -20,6 +21,7 @@ export default function SellerProfile() {
   const fetchSeller = async () => {
   try {
     setLoading(true)
+    setIsPrivate(false)
 
     const userRes = await axios.get(`/users/${id}`)
     setSeller(userRes.data)
@@ -31,11 +33,34 @@ export default function SellerProfile() {
 
   } catch (err) {
     console.error(err)
+    if (err.response?.status === 403) {
+      setIsPrivate(true)
+    }
     setLoading(false)
   }
 }
 
-  if (!seller) return <div className="p-10" style={{ background: 'var(--bg-body)', color: 'var(--text-muted)', minHeight: '100vh' }}>Loading...</div>
+  if (loading) return <div className="p-10" style={{ background: 'var(--bg-body)', color: 'var(--text-muted)', minHeight: '100vh' }}>Loading...</div>
+
+  if (isPrivate) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-body)' }}>
+        <Navbar />
+        <div className="text-center p-8 rounded-2xl border" style={{ background: 'var(--bg-card)', borderColor: 'var(--border-glass)' }}>
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>This Profile is Private</h2>
+          <p style={{ color: 'var(--text-muted)' }}>The user has chosen to keep their profile hidden from the public.</p>
+          <button 
+            onClick={() => window.history.back()}
+            className="mt-6 px-6 py-2 rounded-lg font-bold transition-all"
+            style={{ background: 'var(--primary)', color: 'white' }}
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-body)' }}>

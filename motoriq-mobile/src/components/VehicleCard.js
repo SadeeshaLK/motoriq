@@ -4,6 +4,8 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calculateMonthlyCost } from "../utils/calculateMonthlyCost";
 import { useTheme } from "../context/ThemeContext";
+import { LinearGradient } from "expo-linear-gradient";
+import { formatRelativeDate } from "../utils/formatDate";
 
 export default function VehicleCard({
   vehicle,
@@ -38,20 +40,26 @@ export default function VehicleCard({
       : `https://motoriq-lk.onrender.com/${firstImage}`;
   }
 
-  return (
-    <TouchableOpacity
-      onPress={() => router.push(`/vehicle/${vehicle._id}`)}
-      style={[styles.card, { backgroundColor: t.bgCard, ...t.shadowSm }]}
-    >
+  const cardContent = (
+    <>
       {/* IMAGE */}
       <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
 
-      {/* Best Deal badge */}
-      {vehicle.dealScore > 20 && (
+      {/* Premium or Best Deal badge */}
+      {vehicle.isPremium ? (
+        <LinearGradient
+          colors={["#f59e0b", "#ea580c"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.premiumBadge}
+        >
+          <Text style={styles.premiumBadgeText}>🌟 PREMIUM</Text>
+        </LinearGradient>
+      ) : vehicle.dealScore > 20 ? (
         <View style={[styles.dealBadge, { backgroundColor: t.green }]}>
           <Text style={styles.dealBadgeText}>🔥 Best Deal</Text>
         </View>
-      )}
+      ) : null}
 
       <View style={styles.body}>
         {/* Title */}
@@ -59,10 +67,15 @@ export default function VehicleCard({
           {vehicle.brand} {vehicle.model} {vehicle.manufacturedYear}
         </Text>
 
-        {/* Location */}
-        <Text style={[styles.location, { color: t.textMuted }]}>
-          📍 {vehicle.city || vehicle.district || "Location not specified"}
-        </Text>
+        {/* Location & Date */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+          <Text style={[styles.location, { color: t.textMuted, marginBottom: 0 }]}>
+            📍 {vehicle.city || vehicle.district || "Location not specified"}
+          </Text>
+          <Text style={[styles.location, { color: t.textMuted, fontSize: 11, marginBottom: 0 }]}>
+            🕒 {formatRelativeDate(vehicle.createdAt)}
+          </Text>
+        </View>
 
         {/* Seller rating */}
         {sellerRating && (
@@ -120,6 +133,35 @@ export default function VehicleCard({
           </TouchableOpacity>
         </View>
       </View>
+    </>
+  );
+
+  if (vehicle.isPremium) {
+    return (
+      <TouchableOpacity
+        onPress={() => router.push(`/vehicle/${vehicle._id}`)}
+        style={[styles.cardWrapper, { ...t.shadowMd }]}
+      >
+        <LinearGradient
+          colors={["#f59e0b", "#ea580c"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientBorder}
+        >
+          <View style={[styles.cardInner, { backgroundColor: t.bgCard }]}>
+            {cardContent}
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <TouchableOpacity
+      onPress={() => router.push(`/vehicle/${vehicle._id}`)}
+      style={[styles.card, { backgroundColor: t.bgCard, ...t.shadowSm }]}
+    >
+      {cardContent}
     </TouchableOpacity>
   );
 }
@@ -140,6 +182,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     overflow: "hidden",
   },
+  cardWrapper: {
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  gradientBorder: {
+    borderRadius: 16,
+    padding: 2, // Border width
+  },
+  cardInner: {
+    borderRadius: 14, // Slightly smaller to fit inside border
+    overflow: "hidden",
+  },
   image: { width: "100%", height: 190 },
   dealBadge: {
     position: "absolute",
@@ -150,6 +204,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   dealBadgeText: { color: "#fff", fontSize: 11, fontWeight: "800" },
+  premiumBadge: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+    elevation: 4,
+    shadowColor: "#ea580c",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+  },
+  premiumBadgeText: { color: "#fff", fontSize: 11, fontWeight: "800" },
 
   body: { padding: 14 },
   title: { fontWeight: "800", fontSize: 16, marginBottom: 4 },

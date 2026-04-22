@@ -168,7 +168,13 @@ export const markAllRead = async (req, res) => {
       await chat.save()
     }
 
-    global.io.to(chatId).emit("messagesRead", { userId })
+    // Emit to people inside the chat room
+    global.io.to(chatId).emit("messagesRead", { chatId, userId })
+    
+    // Emit to all participants so their chat lists update
+    chat.users.forEach(u => {
+      global.io.to(u.toString()).emit("messagesRead", { chatId, userId })
+    })
 
     res.json({ success: true })
   } catch (err) {

@@ -96,6 +96,10 @@ const vehicleSchema = new mongoose.Schema(
     },
     boostSlip: {
       type: String
+    },
+    views: {
+      type: Number,
+      default: 0
     }
 
   },

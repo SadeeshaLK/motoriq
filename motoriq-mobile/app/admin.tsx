@@ -22,6 +22,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [flaggedVehicles, setFlaggedVehicles] = useState([]);
+  const [pendingBoosts, setPendingBoosts] = useState([]);
   const [search, setSearch] = useState("");
 
   const [activeTab, setActiveTab] = useState("overview"); // overview, users, vehicles, flagged
@@ -46,7 +47,8 @@ export default function AdminDashboard() {
     await Promise.all([
       fetchStats(t),
       fetchUsers(t),
-      fetchVehicles(t)
+      fetchVehicles(t),
+      fetchPendingBoosts(t)
     ]);
   };
 
@@ -69,6 +71,13 @@ export default function AdminDashboard() {
       const res = await API.get("/admin/vehicles", { headers: { Authorization: t } });
       setVehicles(res.data);
       detectFraud(res.data);
+    } catch (e) { console.log(e); }
+  };
+
+  const fetchPendingBoosts = async (t) => {
+    try {
+      const res = await API.get("/admin/boost-requests", { headers: { Authorization: t } });
+      setPendingBoosts(res.data);
     } catch (e) { console.log(e); }
   };
 
@@ -144,6 +153,26 @@ export default function AdminDashboard() {
     ]);
   };
 
+  const handleBoost = (id, action) => {
+    Alert.alert(`Confirm ${action}`, `Are you sure you want to ${action.toLowerCase()} this boost request?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: action,
+        style: action === "Approve" ? "default" : "destructive",
+        onPress: async () => {
+          try {
+            await API.put(`/admin/boost-requests/${id}/${action.toLowerCase()}`, {}, { headers: { Authorization: token } });
+            setPendingBoosts(pendingBoosts.filter((v) => v._id !== id));
+            Alert.alert("Success", `Boost request ${action.toLowerCase()}d!`);
+            fetchVehicles(token); // Refresh vehicle status
+          } catch {
+            Alert.alert("Error", `Failed to ${action.toLowerCase()} boost request`);
+          }
+        },
+      },
+    ]);
+  };
+
   const exportAlert = (type) => {
      Alert.alert("Export " + type, "CSV exporting relies heavily on the web browser. Please login via the desktop dashboard to export reports natively.");
   };
@@ -173,7 +202,7 @@ export default function AdminDashboard() {
 
       <View style={s.tabsWrap}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.tabsInner}>
-          {["overview", "users", "vehicles", "flagged"].map(tab => (
+          {["overview", "users", "vehicles", "flagged", "boosts"].map(tab => (
             <TouchableOpacity 
               key={tab} 
               style={[s.tabPill, activeTab === tab && s.tabPillActive]}
@@ -184,6 +213,7 @@ export default function AdminDashboard() {
                 {tab === "users" && "👥 Users"}
                 {tab === "vehicles" && "🚗 Vehicles"}
                 {tab === "flagged" && `🚨 Flagged (${flaggedVehicles.length})`}
+                {tab === "boosts" && `🚀 Boosts (${pendingBoosts.length})`}
               </Text>
             </TouchableOpacity>
           ))}
@@ -314,6 +344,36 @@ export default function AdminDashboard() {
                   </TouchableOpacity>
                   <TouchableOpacity style={s.iconBtn} onPress={() => handleDeleteVehicle(v._id)}>
                     <Text style={s.iconBtnTextDelete}>🗑 Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* ================= BOOSTS ================= */}
+        {activeTab === "boosts" && (
+          <View>
+            {pendingBoosts.length === 0 ? (
+               <Text style={s.emptyFlagged}>No pending boost requests ✅</Text>
+            ) : pendingBoosts.map(v => (
+              <View key={v._id} style={s.listItem}>
+                <View style={s.listMeta}>
+                  <Text style={s.listTitle}>{v.brand} {v.model}</Text>
+                  <Text style={s.listSubtitle}>Seller: {v.user?.name || "Unknown"}</Text>
+                  <Text style={s.listDetails}>LKR {v.price?.toLocaleString()}</Text>
+                  {v.depositSlip && (
+                     <Text style={[s.listDetails, { color: "#2563eb", marginTop: 4 }]} onPress={() => router.push(`https://motoriq-lk.onrender.com/${v.depositSlip}`)}>
+                        🔗 View Deposit Slip
+                     </Text>
+                  )}
+                </View>
+                <View style={s.listActionsCol}>
+                  <TouchableOpacity style={[s.iconBtn, {marginBottom: 8, backgroundColor: "#dcfce7"}]} onPress={() => handleBoost(v._id, "Approve")}>
+                    <Text style={[s.iconBtnTextView, { color: "#16a34a" }]}>✅ Approve</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[s.iconBtn, {backgroundColor: "#fee2e2"}]} onPress={() => handleBoost(v._id, "Reject")}>
+                    <Text style={s.iconBtnTextDelete}>❌ Reject</Text>
                   </TouchableOpacity>
                 </View>
               </View>

@@ -234,6 +234,11 @@ export default function ChatList() {
   };
 
   useEffect(() => {
+    if (!user) return;
+
+    // Join my private room for list updates
+    socket.emit("joinUser", user.id);
+
     // Listen to real-time incoming messages to instantly bump the list and unread count
     const onReceive = (msg: any) => fetchChats(false);
     const onRead = () => fetchChats(false);
@@ -247,7 +252,7 @@ export default function ChatList() {
       socket.off("messagesRead", onRead);
       socket.off("messageRead", onRead);
     };
-  }, []);
+  }, [user]);
 
   const onRefresh = () => fetchChats(true);
   const openChat = (chat: any) => router.push(`/chat/${chat._id}`);

@@ -11,7 +11,10 @@ import {
   ActivityIndicator,
   Animated,
   Dimensions,
+  Modal,
+  Image,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import API from "../src/services/api";
@@ -129,6 +132,55 @@ export default function Account() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [passLoading, setPassLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
+
+  // ── Boost Ad ──
+  const [showBoostModal, setShowBoostModal] = useState(null);
+  const [boostImage, setBoostImage] = useState(null);
+  const [isBoosting, setIsBoosting] = useState(false);
+
+  const pickBoostImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission needed", "Please allow access to your photo library.");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: false,
+      quality: 0.8,
+    });
+    if (!result.canceled) {
+      setBoostImage(result.assets[0]);
+    }
+  };
+
+  const handleBoostSubmit = async () => {
+    if (!boostImage) return Alert.alert("Required", "Please select a bank slip image");
+    setIsBoosting(true);
+    const data = new FormData();
+    data.append("slipImage", {
+      uri: boostImage.uri,
+      name: boostImage.fileName || `slip_${Date.now()}.jpg`,
+      type: "image/jpeg",
+    });
+
+    try {
+      await API.post(`/vehicles/${showBoostModal}/boost`, data, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      Alert.alert("Success", "Boost request submitted! Awaiting admin approval.");
+      setShowBoostModal(null);
+      setBoostImage(null);
+      fetchData(token); // Refresh ads
+    } catch (err) {
+      Alert.alert("Error", "Failed to submit boost");
+    } finally {
+      setIsBoosting(false);
+    }
+  };
 
   // ── Load auth + data on mount ─────────────────────────────────────────────
   useEffect(() => {
@@ -276,6 +328,12 @@ export default function Account() {
         <View style={[s.hero, { backgroundColor: t.isDark ? t.bgCard : "#111" }]}>
           <View style={{ position: "absolute", top: Platform.OS === "ios" ? 60 : 44, right: 16, zIndex: 10, flexDirection: "row", gap: 10 }}>
             <NotificationBell />
+            <TouchableOpacity 
+              style={[s.settingsBtn, { backgroundColor: t.isDark ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.2)" }]} 
+              onPress={() => router.push("/settings")}
+            >
+              <Text style={{ fontSize: 18 }}>⚙️</Text>
+            </TouchableOpacity>
             <ThemeToggle />
           </View>
           <View style={s.blob1} />
@@ -383,7 +441,19 @@ export default function Account() {
                       >
                         <Text style={s.deleteBtnText}>🗑 Delete</Text>
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        style={s.boostBtn}
+                        onPress={() => setShowBoostModal(vehicle._id)}
+                      >
+                        <Text style={s.boostBtnText}>🚀 Boost</Text>
+                      </TouchableOpacity>
                     </View>
+                    {/* BOOST STATUS BADGE */}
+                    {vehicle.boostStatus && vehicle.boostStatus !== "none" && !vehicle.isPremium && (
+                      <View style={[s.boostStatusBadge, { backgroundColor: vehicle.boostStatus === "rejected" ? "#ef4444" : "#3b82f6" }]}>
+                        <Text style={s.boostStatusText}>Boost: {vehicle.boostStatus.toUpperCase()}</Text>
+                      </View>
+                    )}
                   </View>
                 ))
               )}
@@ -516,6 +586,47 @@ export default function Account() {
         </View>
       </ScrollView>
 
+      {/* ── BOOST MODAL ── */}
+      <Modal visible={!!showBoostModal} transparent animationType="fade">
+        <View style={s.modalOverlay}>
+          <View style={[s.modalContent, { backgroundColor: t.isDark ? t.bgCard : "#fff" }]}>
+            <TouchableOpacity style={s.modalCloseIcon} onPress={() => setShowBoostModal(null)}>
+              <Text style={{ fontSize: 16, color: "#9ca3af" }}>✕</Text>
+            </TouchableOpacity>
+
+            <Text style={[s.modalTitle, { color: t.textPrimary }]}>🌟 Premium Boost</Text>
+            <Text style={[s.modalDesc, { color: t.textMuted }]}>
+              Rank your ad at the top of the homepage and search results! A one-time administrative fee applies.
+            </Text>
+
+            <View style={[s.bankInfo, { backgroundColor: t.isDark ? "rgba(255,255,255,0.05)" : "#f9fafb" }]}>
+              <Text style={s.bankInfoTitle}>Payment Details</Text>
+              <Text style={[s.bankInfoText, { color: t.textSecondary }]}>Amount: LKR 1000 /=</Text>
+              <Text style={[s.bankInfoText, { color: t.textSecondary }]}>Bank: Commercial Bank</Text>
+              <Text style={[s.bankInfoText, { color: t.textSecondary }]}>Account Name: MotorIQ PVT LTD</Text>
+              <Text style={[s.bankInfoText, { color: t.textSecondary }]}>Account No: 1234567890</Text>
+            </View>
+
+            <Text style={[s.modalLabel, { color: t.textPrimary }]}>Upload Bank Transfer Slip</Text>
+            <TouchableOpacity style={s.imagePickerBtn} onPress={pickBoostImage}>
+              {boostImage ? (
+                <Image source={{ uri: boostImage.uri }} style={{ width: "100%", height: 120, borderRadius: 10 }} resizeMode="cover" />
+              ) : (
+                <Text style={s.imagePickerText}>Tap to select image</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[s.boostSubmitBtn, isBoosting && { opacity: 0.7 }]}
+              onPress={handleBoostSubmit}
+              disabled={isBoosting}
+            >
+              {isBoosting ? <ActivityIndicator color="#fff" /> : <Text style={s.boostSubmitText}>Submit for Approval</Text>}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* ══ BOTTOM BAR ════════════════════════════════════════════════════ */}
       <BottomBar activeRoute="/account" />
 
@@ -567,6 +678,14 @@ const s = StyleSheet.create({
 
   heroName: { color: "#fff", fontSize: 22, fontWeight: "800", letterSpacing: -0.5 },
   heroEmail: { color: "#9ca3af", fontSize: 13, marginTop: 3 },
+  settingsBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backdropFilter: "blur(10px)",
+  },
 
   // Stats
   statsRow: {
@@ -663,6 +782,17 @@ const s = StyleSheet.create({
     borderWidth: 1.5, borderColor: "#fecaca",
   },
   deleteBtnText: { color: "#ef4444", fontWeight: "700", fontSize: 13 },
+  boostBtn: {
+    flex: 1, backgroundColor: "#fef9c3",
+    borderRadius: 10, paddingVertical: 10, alignItems: "center",
+    borderWidth: 1.5, borderColor: "#fde047",
+  },
+  boostBtnText: { color: "#ca8a04", fontWeight: "700", fontSize: 13 },
+  boostStatusBadge: {
+    position: "absolute", top: 12, left: 12,
+    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6,
+  },
+  boostStatusText: { color: "#fff", fontSize: 10, fontWeight: "800" },
   removeFavBtn: {
     marginHorizontal: 12, marginBottom: 12,
     backgroundColor: "#fff1f2", borderRadius: 10, paddingVertical: 10,
@@ -698,4 +828,19 @@ const s = StyleSheet.create({
     shadowOpacity: 0.35, shadowRadius: 10, elevation: 6,
   },
   submitBtnText: { color: "#fff", fontWeight: "800", fontSize: 15 },
+
+  // Boost Modal
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", padding: 20 },
+  modalContent: { borderRadius: 20, padding: 24, shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 10, elevation: 5 },
+  modalCloseIcon: { position: "absolute", top: 16, right: 16, padding: 8 },
+  modalTitle: { fontSize: 20, fontWeight: "800", marginBottom: 8 },
+  modalDesc: { fontSize: 13, marginBottom: 20, lineHeight: 18 },
+  bankInfo: { padding: 16, borderRadius: 12, borderWidth: 1, borderColor: "#e5e7eb", marginBottom: 20 },
+  bankInfoTitle: { fontSize: 14, fontWeight: "700", color: "#ea580c", marginBottom: 8 },
+  bankInfoText: { fontSize: 13, marginBottom: 4 },
+  modalLabel: { fontSize: 14, fontWeight: "600", marginBottom: 8 },
+  imagePickerBtn: { height: 120, borderWidth: 2, borderStyle: "dashed", borderColor: "#cbd5e1", borderRadius: 12, alignItems: "center", justifyContent: "center", marginBottom: 20, overflow: "hidden" },
+  imagePickerText: { color: "#94a3b8", fontWeight: "600" },
+  boostSubmitBtn: { backgroundColor: "#ea580c", paddingVertical: 14, borderRadius: 12, alignItems: "center" },
+  boostSubmitText: { color: "#fff", fontWeight: "700", fontSize: 15 },
 });

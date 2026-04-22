@@ -22,6 +22,7 @@ import VehicleCard from "../../src/components/VehicleCard";
 import BottomBar from "../../src/components/BottomBar";
 import { calculateMonthlyCost } from "../../src/utils/calculateMonthlyCost";
 import { LineChart } from "react-native-chart-kit";
+import { formatRelativeDate } from "../../src/utils/formatDate";
 
 
 const { width: SCREEN_W } = Dimensions.get("window");
@@ -379,6 +380,9 @@ export default function VehicleDetails() {
               <View style={s.metaBadge}>
                 <Text style={s.metaBadgeText}>👁 {views} views</Text>
               </View>
+              <View style={s.metaBadge}>
+                <Text style={s.metaBadgeText}>🕒 Posted {formatRelativeDate(vehicle.createdAt)}</Text>
+              </View>
               {vehicle.trustScore && (
                 <View style={[s.metaBadge, { backgroundColor: "#f0fdf4" }]}>
                   <Text style={[s.metaBadgeText, { color: "#16a34a" }]}>
@@ -430,14 +434,22 @@ export default function VehicleDetails() {
               {"  "}{vehicle.user?.rating || 0} / 5
             </Text>
 
-            <View style={s.contactRow}>
-              <TouchableOpacity style={s.callBtn} onPress={callSeller}>
-                <Text style={s.callBtnText}>📞 Call</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={s.waBtn} onPress={whatsapp}>
-                <Text style={s.waBtnText}>💬 WhatsApp</Text>
-              </TouchableOpacity>
-            </View>
+            {vehicle.user?.settings?.privacy?.showPhone ? (
+              <View style={s.contactRow}>
+                <TouchableOpacity style={s.callBtn} onPress={callSeller}>
+                  <Text style={s.callBtnText}>📞 Call</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={s.waBtn} onPress={whatsapp}>
+                  <Text style={s.waBtnText}>💬 WhatsApp</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={s.hiddenPhoneBanner}>
+                <Text style={s.hiddenPhoneText}>
+                  Seller has hidden their phone number. Please use Live Chat to contact.
+                </Text>
+              </View>
+            )}
 
             {/* Chat buttons */}
             <View style={s.chatBtnRow}>
@@ -796,6 +808,21 @@ const s = StyleSheet.create({
     borderWidth: 1.5, borderColor: "#fed7aa",
   },
   greetingBtnText: { color: "#c2410c", fontWeight: "700", fontSize: 13 },
+
+  hiddenPhoneBanner: {
+    backgroundColor: "#fff7ed",
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#ffedd5",
+    marginTop: 10,
+  },
+  hiddenPhoneText: {
+    color: "#c2410c",
+    fontSize: 12,
+    fontWeight: "600",
+    textAlign: "center",
+  },
 
   // ── Section header ──
   sectionHeader: { flexDirection: "row", alignItems: "center", marginBottom: 14 },

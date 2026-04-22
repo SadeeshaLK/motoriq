@@ -374,6 +374,32 @@ textarea.input {
   box-shadow: var(--shadow-lg);
 }
 
+.premium-card {
+  border: none !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15), var(--shadow-md) !important;
+  position: relative;
+  z-index: 1;
+}
+
+.premium-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px; /* Border thickness */
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.premium-card:hover {
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.35), var(--shadow-lg) !important;
+  transform: translateY(-5px);
+}
+
 /* ============================================================
    THEMED BACKGROUNDS (use these in JSX)
    ============================================================ */

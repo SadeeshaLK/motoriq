@@ -3,6 +3,7 @@ import useAuth from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
 import { calculateMonthlyCost } from "../utils/calculateMonthlyCost"
 import { useCompare } from "../context/CompareContext"
+import { formatRelativeDate } from "../utils/formatDate"
 
 export default function VehicleCard({
   vehicle,
@@ -54,13 +55,17 @@ export default function VehicleCard({
   return (
     <div
       onClick={() => navigate(`/vehicle/${vehicle._id}`)}
-      className="group relative backdrop-blur-md rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all duration-500"
+      className={`group relative backdrop-blur-md rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all duration-500 ${vehicle.isPremium ? 'premium-card' : ''}`}
       style={{
         background: 'var(--bg-card)',
-        border: '1px solid var(--border-glass)',
+        border: vehicle.isPremium ? 'none' : '1px solid var(--border-glass)',
       }}
-      onMouseEnter={e => e.currentTarget.style.boxShadow = 'var(--card-hover-shadow)'}
-      onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
+      onMouseEnter={e => {
+        if (!vehicle.isPremium) e.currentTarget.style.boxShadow = 'var(--card-hover-shadow)'
+      }}
+      onMouseLeave={e => {
+        if (!vehicle.isPremium) e.currentTarget.style.boxShadow = 'none'
+      }}
     >
 
       {/* IMAGE */}
@@ -83,8 +88,13 @@ export default function VehicleCard({
 
         {/* DEAL SCORE OR PREMIUM */}
         {vehicle.isPremium ? (
-          <div className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg flex items-center gap-1"
-            style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)', backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(234,88,12,0.4)' }}>
+          <div className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg flex items-center gap-1 animate-bounce"
+            style={{ 
+              background: 'linear-gradient(135deg, #f59e0b, #ea580c)', 
+              backdropFilter: 'blur(4px)', 
+              boxShadow: '0 4px 12px rgba(234,88,12,0.6)',
+              border: '1px solid rgba(255,255,255,0.3)'
+            }}>
             🌟 PREMIUM
           </div>
         ) : vehicle.dealScore > 20 ? (
@@ -112,9 +122,10 @@ export default function VehicleCard({
           <span className="font-normal ml-1" style={{ color: 'var(--text-muted)' }}>{vehicle.manufacturedYear}</span>
         </h3>
 
-        {/* LOCATION */}
-        <div className="text-[11px] mt-1 flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
-          📍 {vehicle.city || vehicle.district || "Location N/A"}
+        {/* LOCATION & DATE */}
+        <div className="text-[11px] mt-1 flex items-center justify-between" style={{ color: 'var(--text-muted)' }}>
+          <span>📍 {vehicle.city || vehicle.district || "Location N/A"}</span>
+          <span className="flex items-center gap-1">🕒 {formatRelativeDate(vehicle.createdAt)}</span>
         </div>
 
         {/* PRICE */}

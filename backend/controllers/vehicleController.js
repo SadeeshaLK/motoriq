@@ -171,7 +171,7 @@ export const getAllVehicles = async (req, res) => {
 export const getMyVehicles = async (req, res) => {
   try {
     const vehicles = await Vehicle.find({ user: req.user.id })
-      .populate("user", "name rating role")
+      .populate("user", "name rating role settings")
 
     res.json(vehicles)
   } catch (error) {
@@ -190,8 +190,11 @@ export const getVehicleById = async (req, res) => {
       return res.status(400).json("Invalid vehicle ID")
     }
 
-    const vehicle = await Vehicle.findById(id)
-      .populate("user", "name rating phone")
+    const vehicle = await Vehicle.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      { new: true }
+    ).populate("user", "name rating phone settings")
 
     if (!vehicle) {
       return res.status(404).json("Vehicle not found")
@@ -299,7 +302,7 @@ export const searchVehicles = async (req, res) => {
 
 
     const vehicles = await Vehicle.find(query)
-      .populate("user", "name role rating profileImage")
+      .populate("user", "name role rating profileImage settings")
       .sort({ isPremium: -1, createdAt: -1 })
 
     res.json(vehicles)

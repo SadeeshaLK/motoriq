@@ -61,22 +61,52 @@ io.on("connection",(socket)=>{
     socket.join(chatId)
   })
 
-  socket.on("sendMessage",({chatId,message})=>{
+  socket.on("joinUser",(userId)=>{
+    socket.join(userId)
+    console.log(`User ${userId} joined their private room`)
+  })
+
+  socket.on("sendMessage",({chatId,message, participants})=>{
+    // Emit to people inside the chat room
     io.to(chatId).emit("receiveMessage",message)
 
+    // Emit to individual user rooms so chat lists update
+    if (participants && Array.isArray(participants)) {
+      participants.forEach(uid => {
+        io.to(uid).emit("receiveMessage", message)
+      })
+    }
+
     socket.to(chatId).emit("newNotification",{
-    text:"New message received",
-    link:`/chat/${chatId}`
-  })
+      text:"New message received",
+      link:`/chat/${chatId}`
+    })
   })
 
   socket.on("typing",(data)=>{
     socket.to(data.chatId).emit("typing",data)
   })
 
-  socket.on("messageRead",({chatId,messageId,userId})=>{
-  io.to(chatId).emit("messageRead",{messageId,userId})
-})
+  socket.on("messageRead",({chatId,messageId,userId, participants})=>{
+    // Inside chat
+    io.to(chatId).emit("messageRead",{messageId,userId, chatId})
+    
+    // On chat list
+    if (participants && Array.isArray(participants)) {
+      participants.forEach(uid => {
+        io.to(uid).emit("messageRead", {messageId, userId, chatId})
+      })
+    }
+  })
+
+  socket.on("markAllRead", ({chatId, userId, participants}) => {
+    io.to(chatId).emit("messagesRead", { chatId, userId })
+    if (participants && Array.isArray(participants)) {
+      participants.forEach(uid => {
+        io.to(uid).emit("messagesRead", { chatId, userId })
+      })
+    }
+  })
 
 })
 

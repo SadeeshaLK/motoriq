@@ -91,6 +91,7 @@ export default function SellerProfile() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   // Hero parallax
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -102,16 +103,19 @@ export default function SellerProfile() {
   const fetchSeller = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
+    setIsPrivate(false);
 
     try {
-      const [userRes, vehicleRes] = await Promise.all([
-        API.get(`/users/${id}`),
-        API.get(`/vehicles/user/${id}`),
-      ]);
+      const userRes = await API.get(`/users/${id}`);
       setSeller(userRes.data);
+      
+      const vehicleRes = await API.get(`/vehicles/user/${id}`);
       setVehicles(vehicleRes.data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("SellerProfile fetch error:", err);
+      if (err.response?.status === 403) {
+        setIsPrivate(true);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -131,6 +135,22 @@ export default function SellerProfile() {
         <View style={{ padding: 14, gap: 14, marginTop: 60 }}>
           {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
         </View>
+        <BottomBar activeRoute="/home" />
+      </View>
+    );
+  }
+
+  if (isPrivate) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f3f4f6", padding: 20 }}>
+        <Text style={{ fontSize: 60, marginBottom: 20 }}>🔒</Text>
+        <Text style={{ fontSize: 22, fontWeight: "800", color: "#111", textAlign: "center" }}>This Profile is Private</Text>
+        <Text style={{ color: "#6b7280", marginTop: 10, fontSize: 14, textAlign: "center", paddingHorizontal: 20 }}>
+          The seller has chosen to keep their profile hidden from the public.
+        </Text>
+        <TouchableOpacity style={s.backBtnSolid} onPress={() => router.back()}>
+          <Text style={s.backBtnSolidText}>Go Back</Text>
+        </TouchableOpacity>
         <BottomBar activeRoute="/home" />
       </View>
     );
