@@ -66,7 +66,7 @@ export const getAllUsers = async (req, res) => {
     let query = {}
     if (search) {
       query.$or = [
-        { username: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } }
       ]
     }
@@ -183,7 +183,7 @@ export const getAllVehicles = async (req, res) => {
     if (brand) query.brand = brand
 
     const vehicles = await Vehicle.find(query)
-      .populate("user", "username email")
+      .populate("user", "name email")
       .sort({ createdAt: -1 })
 
     res.json(vehicles)
@@ -264,7 +264,7 @@ export const sendAdminNotification = async (req, res) => {
 export const getPendingBoosts = async (req, res) => {
   try {
     const boosts = await Vehicle.find({ boostStatus: "pending" })
-      .populate("user", "username email phone")
+      .populate("user", "name email phone")
       .sort({ updatedAt: -1 })
     res.json(boosts)
   } catch(err) {

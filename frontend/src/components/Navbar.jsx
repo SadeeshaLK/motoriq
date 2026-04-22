@@ -420,7 +420,7 @@ export default function Navbar() {
                   </div>
 
                   <span className="hidden md:block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
-                    {user?.username}
+                    {user?.name}
                   </span>
 
                   <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} style={{ color: 'var(--text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -436,7 +436,7 @@ export default function Navbar() {
                     <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
 
                       <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                        {user?.username}
+                        {user?.name}
                       </p>
 
                       <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>

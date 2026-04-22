@@ -132,8 +132,8 @@ export default function AdminDashboard() {
   const exportUsersCSV = () => {
     if (!users.length) return toast.error("No users to export")
     exportCSV(
-      ["Username", "Email", "Listings", "Joined", "Last Login", "Trust Score", "Banned"],
-      users.map(u => [u.username, u.email, u.listingsCount, u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "", u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "", u.trustScore || 50, u.isBanned ? "Yes" : "No"]),
+      ["Name", "Email", "Listings", "Joined", "Last Login", "Trust Score", "Banned"],
+      users.map(u => [u.name, u.email, u.listingsCount, u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "", u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "", u.trustScore || 50, u.isBanned ? "Yes" : "No"]),
       "users.csv"
     )
   }
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
     if (!vehicles.length) return toast.error("No vehicles to export")
     exportCSV(
       ["Brand", "Model", "Year", "Price", "City", "Seller", "Email"],
-      vehicles.map(v => [v.brand, v.model, v.manufacturedYear, v.price, v.city, v.user?.username, v.user?.email]),
+      vehicles.map(v => [v.brand, v.model, v.manufacturedYear, v.price, v.city, v.user?.name, v.user?.email]),
       "vehicles.csv"
     )
   }
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
   }))
 
   const filteredUsers = users.filter(u => {
-    const matchSearch = (u.username || "").toLowerCase().includes(search.toLowerCase()) ||
+    const matchSearch = (u.name || "").toLowerCase().includes(search.toLowerCase()) ||
       (u.email || "").toLowerCase().includes(search.toLowerCase())
     if (userFilter === "banned") return matchSearch && u.isBanned
     if (userFilter === "admin") return matchSearch && u.isAdmin
@@ -411,7 +411,7 @@ export default function AdminDashboard() {
               <input
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); fetchUsers(e.target.value, userFilter) }}
-                placeholder="Search by username or email..."
+                placeholder="Search by name or email..."
                 className="input flex-1"
               />
               {["all","banned","admin"].map(f => (
@@ -441,11 +441,11 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedUser(selectedUser?._id === user._id ? null : user)}>
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold"
                       style={{ background: user.isAdmin ? 'linear-gradient(135deg,#f97316,#ea580c)' : 'linear-gradient(135deg,#3b82f6,#1d4ed8)' }}>
-                      {user.username?.[0]?.toUpperCase() || "?"}
+                      {user.name?.[0]?.toUpperCase() || "?"}
                     </div>
                     <div>
                       <div className="font-medium text-sm flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                        {user.username}
+                        {user.name}
                         {user.isAdmin && <span className="text-xs px-1.5 py-0.5 rounded font-bold" style={{ background: 'var(--primary-glow)', color: 'var(--primary)' }}>Admin</span>}
                         {user.isBanned && <span className="text-xs px-1.5 py-0.5 rounded font-bold" style={{ background: 'var(--red-glow)', color: 'var(--red)' }}>Banned</span>}
                       </div>
@@ -509,12 +509,12 @@ export default function AdminDashboard() {
                   onClick={() => setSelectedVehicle(selectedVehicle?._id === v._id ? null : v)}>
 
                   <div className="flex items-center gap-3">
-                    <img src={v.images?.[0] ? `https://motoriq-lk.onrender.com${v.images[0]}` : "/no-image.png"}
+                    <img src={v.images?.[0] ? `${import.meta.env.VITE_UPLOAD_BASE_URL || "https://motoriq-lk.onrender.com"}${v.images[0]}` : "/no-image.png"}
                       className="w-12 h-10 object-cover rounded-lg" />
                     <div>
                       <div className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>{v.brand} {v.model} ({v.manufacturedYear})</div>
                       <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                        LKR {v.price?.toLocaleString()} • {v.city} • {v.user?.username}
+                        LKR {v.price?.toLocaleString()} • {v.city} • {v.user?.name}
                       </div>
                     </div>
                   </div>
@@ -557,7 +557,7 @@ export default function AdminDashboard() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{v.brand} {v.model} — LKR {v.price?.toLocaleString()}</p>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Seller: {v.user?.username} ({v.user?.email})</p>
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Seller: {v.user?.name} ({v.user?.email})</p>
                         <div className="flex flex-wrap gap-1 mt-2">
                           {v.reasons.map((r, i) => (
                             <span key={i} className="text-xs px-2 py-0.5 rounded-full font-medium text-white" style={{ background: 'var(--red)' }}>{r}</span>
@@ -646,13 +646,13 @@ export default function AdminDashboard() {
                   <div key={boost._id} className="p-4 rounded-xl flex flex-col justify-between" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)' }}>
                     <div>
                       <h4 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{boost.brand} {boost.model}</h4>
-                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}><b>Seller:</b> {boost.user?.username}</p>
+                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}><b>Seller:</b> {boost.user?.name}</p>
                       <p className="text-sm" style={{ color: 'var(--text-secondary)' }}><b>Email:</b> {boost.user?.email}</p>
                       
                       <p className="text-sm font-semibold mt-4 mb-2" style={{ color: 'var(--text-primary)' }}>Deposited Slip:</p>
                       {boost.boostSlip ? (
-                        <a href={`https://motoriq-lk.onrender.com${boost.boostSlip}`} target="_blank" rel="noopener noreferrer">
-                          <img src={`https://motoriq-lk.onrender.com${boost.boostSlip}`} alt="Bank Slip" className="w-full h-40 object-cover rounded-lg border border-gray-300 dark:border-gray-600 mb-4 cursor-pointer hover:opacity-80 transition-opacity" />
+                        <a href={`${import.meta.env.VITE_UPLOAD_BASE_URL || "https://motoriq-lk.onrender.com"}${boost.boostSlip}`} target="_blank" rel="noopener noreferrer">
+                          <img src={`${import.meta.env.VITE_UPLOAD_BASE_URL || "https://motoriq-lk.onrender.com"}${boost.boostSlip}`} alt="Bank Slip" className="w-full h-40 object-cover rounded-lg border border-gray-300 dark:border-gray-600 mb-4 cursor-pointer hover:opacity-80 transition-opacity" />
                         </a>
                       ) : (
                         <p className="text-xs text-red-500 mb-4">No slip uploaded</p>

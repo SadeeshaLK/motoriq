@@ -171,7 +171,7 @@ export const getAllVehicles = async (req, res) => {
 export const getMyVehicles = async (req, res) => {
   try {
     const vehicles = await Vehicle.find({ user: req.user.id })
-      .populate("user", "username rating role")
+      .populate("user", "name rating role")
 
     res.json(vehicles)
   } catch (error) {

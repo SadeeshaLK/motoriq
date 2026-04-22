@@ -55,7 +55,7 @@ export default function SellerProfile() {
         >
 
           <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-            {seller.username}
+            {seller.name}
           </h1>
 
           <p className="mb-4" style={{ color: 'var(--text-muted)' }}>
@@ -87,10 +87,6 @@ export default function SellerProfile() {
         <div className="backdrop-blur-lg rounded-2xl p-6 flex flex-wrap justify-between gap-6"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
-          <div>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Name</p>
-            <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{seller.name}</p>
-          </div>
 
           <div>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Joined</p>

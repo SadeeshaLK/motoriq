@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const instance = axios.create({
-  baseURL: "https://motoriq-lk.onrender.com/api"
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://motoriq-lk.onrender.com/api"
 })
 
 instance.interceptors.response.use(

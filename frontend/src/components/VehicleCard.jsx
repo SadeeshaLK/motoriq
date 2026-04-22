@@ -43,9 +43,12 @@ export default function VehicleCard({
   if (vehicle.images && vehicle.images.length > 0) {
     let firstImage = vehicle.images[0]
     if (firstImage.startsWith("/")) firstImage = firstImage.slice(1)
+    
+    const baseUrl = import.meta.env.VITE_UPLOAD_BASE_URL || "https://motoriq-lk.onrender.com"
+
     if (firstImage.startsWith("http")) imageUrl = firstImage
-    else if (firstImage.startsWith("uploads/")) imageUrl = `https://motoriq-lk.onrender.com/${firstImage}`
-    else imageUrl = `https://motoriq-lk.onrender.com/uploads/${firstImage}`
+    else if (firstImage.startsWith("uploads/")) imageUrl = `${baseUrl}/${firstImage}`
+    else imageUrl = `${baseUrl}/uploads/${firstImage}`
   }
 
   return (

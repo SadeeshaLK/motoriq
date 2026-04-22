@@ -5,6 +5,7 @@ import VehicleCard from "../components/VehicleCard"
 import Navbar from "../components/Navbar"
 import { useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
+import toast from "react-hot-toast"
 
 export default function Account() {
 
@@ -16,7 +17,7 @@ export default function Account() {
   const [favorites, setFavorites] = useState([])
 
   const [profileData, setProfileData] = useState({
-    username: "",
+    name: "",
     email: "",
     phone: "",
     city: ""
@@ -47,7 +48,7 @@ export default function Account() {
         setFavorites(favRes.data)
 
         setProfileData({
-          username: user?.username || "",
+          name: user?.name || "",
           email: user?.email || "",
           phone: user?.phone || "",
           city: user?.city || ""
@@ -71,7 +72,7 @@ export default function Account() {
 
       setMyAds(prev => prev.filter(ad => ad._id !== id))
     } catch (err) {
-      alert("Failed to delete ad")
+      toast.error("Failed to delete ad")
     }
   }
 
@@ -83,7 +84,7 @@ export default function Account() {
 
       setFavorites(prev => prev.filter(v => v._id !== id))
     } catch (err) {
-      alert("Failed to remove favorite")
+      toast.error("Failed to remove favorite")
     }
   }
 
@@ -111,18 +112,30 @@ export default function Account() {
   }
 
   const updateProfile = async () => {
-    await axios.put("/users/profile", profileData, {
-      headers: { Authorization: token }
-    })
-    alert("Profile updated successfully")
+    try {
+      await axios.put("/users/profile", {
+        name: profileData.name,
+        phone: profileData.phone,
+        city: profileData.city
+      }, {
+        headers: { Authorization: token }
+      })
+      toast.success("Profile updated successfully")
+    } catch (err) {
+      toast.error("Failed to update profile")
+    }
   }
 
   const changePassword = async () => {
-    await axios.put("/users/change-password", passwordData, {
-      headers: { Authorization: token }
-    })
-    alert("Password changed successfully")
-    setPasswordData({ currentPassword: "", newPassword: "" })
+    try {
+      await axios.put("/users/change-password", passwordData, {
+        headers: { Authorization: token }
+      })
+      toast.success("Password changed successfully")
+      setPasswordData({ currentPassword: "", newPassword: "" })
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update password")
+    }
   }
 
   const menuItem = (key, label, icon) => {
@@ -173,7 +186,7 @@ export default function Account() {
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             </div>
             <div>
-              <h1 className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{user?.username || "Your Account"}</h1>
+              <h1 className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{user?.name || "Your Account"}</h1>
               <p className="font-medium" style={{ color: 'var(--text-muted)' }}>{user?.email}</p>
             </div>
           </motion.div>
@@ -368,8 +381,8 @@ export default function Account() {
                   <div className="space-y-5 max-w-xl">
                     <div className="grid grid-cols-2 gap-5">
                       <div className="relative">
-                        <input id="username" type="text" className="input peer" placeholder=" " value={profileData.username} onChange={(e) => setProfileData({ ...profileData, username: e.target.value })} />
-                        <label htmlFor="username" className="floating-label">Username</label>
+                        <input id="name" type="text" className="input peer" placeholder=" " value={profileData.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} />
+                        <label htmlFor="name" className="floating-label">Full Name</label>
                       </div>
                       <div className="relative">
                         <input id="email" type="email" className="input peer" placeholder=" " value={profileData.email} disabled />

@@ -78,10 +78,12 @@ export default function VehicleDetails() {
 
     if (image.startsWith("http")) return image
 
-    if (image.startsWith("uploads/"))
-      return `https://motoriq-lk.onrender.com/${image}`
+    const baseUrl = import.meta.env.VITE_UPLOAD_BASE_URL || "https://motoriq-lk.onrender.com"
 
-    return `https://motoriq-lk.onrender.com/uploads/${image}`
+    if (image.startsWith("uploads/"))
+      return `${baseUrl}/${image}`
+
+    return `${baseUrl}/uploads/${image}`
   }
 
   const processedImages = images.map(img => buildImageUrl(img))

@@ -122,7 +122,7 @@ export const getFavorites = async (req, res) => {
     const user = await User.findById(req.user.id)
       .populate({
         path: "favorites",
-        populate: { path: "user", select: "username rating role" }
+        populate: { path: "user", select: "name rating role" }
       })
 
     res.json(user.favorites)
