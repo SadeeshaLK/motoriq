@@ -360,7 +360,13 @@ const s = StyleSheet.create({
   backBtnSolidText: { color: "#fff", fontWeight: "800", fontSize: 14 },
 
   // Avatar
-  avatarWrap: { position: "relative", marginBottom: 14, marginTop: 8 },
+  avatarWrap: { 
+    position: "relative", 
+    marginBottom: 14, 
+    marginTop: 8,
+    width: 80,
+    height: 80,
+  },
   avatar: {
     width: 80, height: 80, borderRadius: 40,
     backgroundColor: "#ff6600",
@@ -369,10 +375,13 @@ const s = StyleSheet.create({
   },
   avatarText: { color: "#fff", fontSize: 34, fontWeight: "800" },
   avatarVerified: {
-    position: "absolute", bottom: 0, right: 0,
+    position: "absolute", 
+    bottom: 0, 
+    right: 0,
     width: 24, height: 24, borderRadius: 12,
     backgroundColor: "#22c55e", borderWidth: 2, borderColor: "#111",
     alignItems: "center", justifyContent: "center",
+    zIndex: 2,
   },
   avatarVerifiedText: { color: "#fff", fontSize: 11, fontWeight: "800" },
 
