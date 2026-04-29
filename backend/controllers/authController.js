@@ -71,12 +71,19 @@ const otpStore = {}
 const otpCooldown = {}
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // true for port 465, false for other ports (like 587)
   auth: {
     user: "sadeeshaseneviratne@gmail.com",
-    pass: "ofee vxku jzuq jhyb" // ⚠️ use Gmail App Password
+    pass: "ofee vxku jzuq jhyb" // ⚠️ Gmail App Password
   },
-  connectionTimeout: 3000, // Important: Prevent hanging on Render free tier
+  tls: {
+    // This forces the connection to use IPv4 instead of IPv6, 
+    // which fixes the "ENETUNREACH" error on Render.
+    family: 4 
+  },
+  connectionTimeout: 10000, // Increased timeout for stability
 });
 
 export const sendOtp = async (req, res) => {
