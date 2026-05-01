@@ -1,7 +1,7 @@
 import User from "../models/User.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import nodemailer from "nodemailer"
+import { Resend } from "resend"
 
 
 export const checkEmail = async (req, res) => {
@@ -70,21 +70,7 @@ export const registerUser = async (req, res) => {
 const otpStore = {}
 const otpCooldown = {}
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // true for port 465, false for other ports (like 587)
-  auth: {
-    user: "sadeeshaseneviratne@gmail.com",
-    pass: "ofee vxku jzuq jhyb" // ⚠️ Gmail App Password
-  },
-  tls: {
-    // This forces the connection to use IPv4 instead of IPv6, 
-    // which fixes the "ENETUNREACH" error on Render.
-    family: 4 
-  },
-  connectionTimeout: 10000, // Increased timeout for stability
-});
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendOtp = async (req, res) => {
   try {
@@ -107,8 +93,8 @@ export const sendOtp = async (req, res) => {
     otpCooldown[email] = now;
 
     try {
-      await transporter.sendMail({
-        from: '"MotorIQ" <motoriq.lk@gmail.com>',
+      await resend.emails.send({
+        from: "MotorIQ <onboarding@resend.dev>",
         to: email,
         subject: "🔐 Verify Your Email - MotorIQ",
         html: `
@@ -134,12 +120,12 @@ export const sendOtp = async (req, res) => {
       });
       res.json({ success: true });
     } catch (mailError) {
-      console.error("Nodemailer Error (Likely SMTP Blocked by Render):", mailError.message);
-      // Fallback: If Render blocks SMTP, give them a bypass master OTP so they can test
+      console.error("Resend Error:", mailError.message);
+      // Fallback: If Resend fails, give them a bypass master OTP so they can test
       otpStore[email].otp = "123456";
       res.json({ 
         success: true, 
-        message: "SMTP Blocked. Bypass OTP is 123456." 
+        message: "Email service unavailable. Bypass OTP is 123456." 
       });
     }
   } catch (error) {

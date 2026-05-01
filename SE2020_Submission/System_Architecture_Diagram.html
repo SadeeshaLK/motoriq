@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>System Architecture - MotorIQ</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 30px; background: #f5f5f5; }
+  h1 { text-align: center; color: #1a1a2e; margin-bottom: 5px; }
+  .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+  .diagram { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  
+  .layer { margin: 20px 0; padding: 20px; border-radius: 10px; position: relative; }
+  .layer-title { font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+  
+  .client-layer { background: #e8f4f8; border: 2px solid #4ecdc4; }
+  .client-layer .layer-title { color: #2c7873; }
+  
+  .api-layer { background: #ffeaa7; border: 2px solid #fdcb6e; }
+  .api-layer .layer-title { color: #e17055; }
+  
+  .service-layer { background: #dfe6e9; border: 2px solid #b2bec3; }
+  .service-layer .layer-title { color: #636e72; }
+  
+  .data-layer { background: #fab1a0; border: 2px solid #e17055; }
+  .data-layer .layer-title { color: #d63031; }
+  
+  .external-layer { background: #a29bfe33; border: 2px solid #6c5ce7; }
+  .external-layer .layer-title { color: #6c5ce7; }
+  
+  .boxes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .box { background: #fff; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 500; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; min-width: 120px; }
+  
+  .arrow { text-align: center; font-size: 28px; color: #636e72; margin: 5px 0; }
+  
+  .legend { display: flex; gap: 20px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #555; }
+  .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<h1>System Architecture Diagram</h1>
+<p class="subtitle">MotorIQ – Smart Vehicle Marketplace Platform</p>
+
+<div class="diagram">
+
+  <!-- CLIENT LAYER -->
+  <div class="layer client-layer">
+    <div class="layer-title">📱 Client Layer (Presentation)</div>
+    <div class="boxes">
+      <div class="box">
+        <strong>Web App</strong><br>
+        React.js (Vite)<br>
+        TailwindCSS
+      </div>
+      <div class="box">
+        <strong>Mobile App</strong><br>
+        React Native<br>
+        Expo
+      </div>
+      <div class="box">
+        <strong>Socket.IO Client</strong><br>
+        Real-Time Events<br>
+        Chat & Notifications
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">⬇ HTTP / WebSocket ⬇</div>
+
+  <!-- API GATEWAY LAYER -->
+  <div class="layer api-layer">
+    <div class="layer-title">🔀 API Layer (Express.js + Socket.IO Server)</div>
+    <div class="boxes">
+      <div class="box">Auth Routes<br><code>/api/auth</code></div>
+      <div class="box">Vehicle Routes<br><code>/api/vehicles</code></div>
+      <div class="box">User Routes<br><code>/api/users</code></div>
+      <div class="box">Chat Routes<br><code>/api/chat</code></div>
+      <div class="box">Admin Routes<br><code>/api/admin</code></div>
+      <div class="box">Notification Routes<br><code>/api/notifications</code></div>
+      <div class="box">Search Routes<br><code>/api/search</code></div>
+      <div class="box">Price Routes<br><code>/api/price</code></div>
+      <div class="box">Trust Routes<br><code>/api/trust</code></div>
+      <div class="box">Review Routes<br><code>/api/reviews</code></div>
+    </div>
+  </div>
+
+  <div class="arrow">⬇ ⬇</div>
+
+  <!-- MIDDLEWARE LAYER -->
+  <div class="layer" style="background:#d5f5e3; border:2px solid #27ae60;">
+    <div class="layer-title" style="color:#27ae60;">🛡️ Middleware Layer</div>
+    <div class="boxes">
+      <div class="box">JWT Auth<br>Middleware</div>
+      <div class="box">Admin Only<br>Middleware</div>
+      <div class="box">Multer Upload<br>Middleware</div>
+      <div class="box">Watermark<br>Processor</div>
+      <div class="box">CORS<br>Middleware</div>
+    </div>
+  </div>
+
+  <div class="arrow">⬇ ⬇</div>
+
+  <!-- SERVICE / BUSINESS LOGIC LAYER -->
+  <div class="layer service-layer">
+    <div class="layer-title">⚙️ Service Layer (Business Logic)</div>
+    <div class="boxes">
+      <div class="box">Auth Controller</div>
+      <div class="box">Vehicle Controller</div>
+      <div class="box">User Controller</div>
+      <div class="box">Chat Controller</div>
+      <div class="box">Admin Controller</div>
+      <div class="box">Search Controller</div>
+      <div class="box">Price Controller</div>
+      <div class="box">Trust Controller</div>
+      <div class="box">Review Controller</div>
+    </div>
+    <div style="margin-top: 12px;">
+      <div class="boxes">
+        <div class="box" style="border: 2px solid #6c5ce7;">AI Price Service</div>
+        <div class="box" style="border: 2px solid #6c5ce7;">Recommendation Service</div>
+        <div class="box" style="border: 2px solid #6c5ce7;">Trust Score Service</div>
+        <div class="box" style="border: 2px solid #6c5ce7;">Watermark Service</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">⬇ ⬇</div>
+
+  <!-- DATA LAYER -->
+  <div class="layer data-layer">
+    <div class="layer-title">🗄️ Data Layer</div>
+    <div class="boxes">
+      <div class="box" style="border: 2px solid #d63031;">
+        <strong>MongoDB Atlas</strong><br>
+        Mongoose ODM
+      </div>
+      <div class="box" style="border: 2px solid #d63031;">
+        <strong>Collections</strong><br>
+        Users · Vehicles · Chats<br>
+        Notifications · Reviews · TrustLogs
+      </div>
+      <div class="box" style="border: 2px solid #d63031;">
+        <strong>File Storage</strong><br>
+        Local Uploads<br>
+        (Watermarked Images)
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">⬇ ⬇</div>
+
+  <!-- EXTERNAL SERVICES -->
+  <div class="layer external-layer">
+    <div class="layer-title">🌐 External Services</div>
+    <div class="boxes">
+      <div class="box" style="border: 2px solid #6c5ce7;">Google Gemini AI<br>(Price Estimation)</div>
+      <div class="box" style="border: 2px solid #6c5ce7;">Nodemailer SMTP<br>(Email OTP)</div>
+      <div class="box" style="border: 2px solid #6c5ce7;">Google OAuth 2.0<br>(Social Login)</div>
+      <div class="box" style="border: 2px solid #6c5ce7;">Render<br>(Deployment)</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-color" style="background:#e8f4f8; border:1px solid #4ecdc4;"></div> Client Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background:#ffeaa7; border:1px solid #fdcb6e;"></div> API Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background:#d5f5e3; border:1px solid #27ae60;"></div> Middleware</div>
+    <div class="legend-item"><div class="legend-color" style="background:#dfe6e9; border:1px solid #b2bec3;"></div> Services</div>
+    <div class="legend-item"><div class="legend-color" style="background:#fab1a0; border:1px solid #e17055;"></div> Data Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background:#a29bfe33; border:1px solid #6c5ce7;"></div> External</div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -25,6 +25,7 @@ export const getAdminStats = async (req, res) => {
 
     const averagePrice = avgPriceResult[0]?.avgPrice || 0
 
+
     const monthlyGrowth = await Vehicle.aggregate([
       {
         $group: {

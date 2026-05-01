@@ -1,0 +1,12 @@
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+*.pdf
+# Specific ignore for subfolders if needed
+backend/node_modules/
+backend/.env
+frontend/node_modules/
+frontend/.env
+motoriq-mobile/node_modules/

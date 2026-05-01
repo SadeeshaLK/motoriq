@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Database Schema Diagram - MotorIQ</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 30px; background: #f5f5f5; }
+  h1 { text-align: center; color: #1a1a2e; margin-bottom: 5px; }
+  .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+  .diagram { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  
+  .collections { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; }
+  
+  .collection { 
+    background: #fff; border-radius: 10px; box-shadow: 0 3px 15px rgba(0,0,0,0.12); 
+    min-width: 280px; max-width: 340px; flex: 1; overflow: hidden;
+  }
+  .collection-header { 
+    background: #1a1a2e; color: #fff; padding: 12px 18px; font-weight: bold; font-size: 15px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .collection-body { padding: 0; }
+  .field { 
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 18px; border-bottom: 1px solid #eee; font-size: 13px;
+  }
+  .field:last-child { border-bottom: none; }
+  .field-name { font-weight: 600; color: #333; }
+  .field-type { color: #888; font-size: 12px; font-family: 'Consolas', monospace; }
+  
+  .pk { color: #e94560; }
+  .fk { color: #6c5ce7; }
+  .req { background: #fff3cd; padding: 1px 6px; border-radius: 3px; font-size: 10px; color: #856404; margin-left: 5px; }
+  .idx { background: #d1ecf1; padding: 1px 6px; border-radius: 3px; font-size: 10px; color: #0c5460; margin-left: 5px; }
+  
+  .relations { max-width: 1200px; margin: 30px auto 0; background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .relations h2 { color: #1a1a2e; border-left: 4px solid #e94560; padding-left: 12px; }
+  .rel-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  .rel-table th { background: #1a1a2e; color: #fff; padding: 10px 15px; text-align: left; }
+  .rel-table td { padding: 8px 15px; border-bottom: 1px solid #ddd; font-size: 13px; }
+  .rel-table tr:nth-child(even) { background: #f8f8f8; }
+  
+  .embedded { background: #f0f0ff; }
+  .embedded .collection-header { background: #6c5ce7; }
+</style>
+</head>
+<body>
+
+<h1>Database Schema Diagram</h1>
+<p class="subtitle">MotorIQ – MongoDB Collections & Relationships</p>
+
+<div class="diagram">
+  <div class="collections">
+
+    <!-- USER -->
+    <div class="collection">
+      <div class="collection-header">👤 User</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field"><span class="field-name">name <span class="req">required</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">email <span class="req">required</span> <span class="idx">unique</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">password <span class="req">required</span></span><span class="field-type">String (hashed)</span></div>
+        <div class="field"><span class="field-name">phone</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">city</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">bio</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">location</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">profileImage</span><span class="field-type">String (URL)</span></div>
+        <div class="field"><span class="field-name">settings.notifications</span><span class="field-type">Object</span></div>
+        <div class="field"><span class="field-name">settings.privacy</span><span class="field-type">Object</span></div>
+        <div class="field"><span class="field-name">otp</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">otpExpires</span><span class="field-type">Date</span></div>
+        <div class="field"><span class="field-name">totalReviews</span><span class="field-type">Number (default: 0)</span></div>
+        <div class="field"><span class="field-name">lastLogin</span><span class="field-type">Date</span></div>
+        <div class="field"><span class="field-name fk">favorites</span><span class="field-type">[ObjectId → Vehicle]</span></div>
+        <div class="field"><span class="field-name">isAdmin</span><span class="field-type">Boolean (default: false)</span></div>
+        <div class="field"><span class="field-name">isBanned</span><span class="field-type">Boolean (default: false)</span></div>
+        <div class="field"><span class="field-name">createdAt / updatedAt</span><span class="field-type">Date (auto)</span></div>
+      </div>
+    </div>
+
+    <!-- VEHICLE -->
+    <div class="collection">
+      <div class="collection-header">🚗 Vehicle</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field"><span class="field-name">brand <span class="req">required</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">model <span class="req">required</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">vehicleType <span class="req">required</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">condition <span class="req">required</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">manufacturedYear <span class="req">required</span></span><span class="field-type">Number</span></div>
+        <div class="field"><span class="field-name">registeredYear</span><span class="field-type">Number</span></div>
+        <div class="field"><span class="field-name">maintenanceLevel</span><span class="field-type">Enum [low, medium, high]</span></div>
+        <div class="field"><span class="field-name">maintenancePeriod</span><span class="field-type">Enum [3m, 6m, 1y]</span></div>
+        <div class="field"><span class="field-name">price <span class="req">required</span></span><span class="field-type">Number</span></div>
+        <div class="field"><span class="field-name">transmission</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">fuelType</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">engineCapacity</span><span class="field-type">Number</span></div>
+        <div class="field"><span class="field-name">mileage</span><span class="field-type">Number (default: 0)</span></div>
+        <div class="field"><span class="field-name">trustScore</span><span class="field-type">Number (default: 50)</span></div>
+        <div class="field"><span class="field-name">options / safetyOptions / techOptions</span><span class="field-type">[String]</span></div>
+        <div class="field"><span class="field-name">province / district / city</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">location <span class="idx">2dsphere</span></span><span class="field-type">GeoJSON Point</span></div>
+        <div class="field"><span class="field-name">images</span><span class="field-type">[String] (URLs)</span></div>
+        <div class="field"><span class="field-name fk">user <span class="req">required</span></span><span class="field-type">ObjectId → User</span></div>
+        <div class="field"><span class="field-name">isPremium</span><span class="field-type">Boolean (default: false)</span></div>
+        <div class="field"><span class="field-name">boostStatus</span><span class="field-type">Enum [none, pending, active, rejected]</span></div>
+        <div class="field"><span class="field-name">boostSlip</span><span class="field-type">String (URL)</span></div>
+        <div class="field"><span class="field-name">views</span><span class="field-type">Number (default: 0)</span></div>
+        <div class="field"><span class="field-name">createdAt / updatedAt</span><span class="field-type">Date (auto)</span></div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="collection">
+      <div class="collection-header">💬 Chat</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field"><span class="field-name fk">vehicle</span><span class="field-type">ObjectId → Vehicle</span></div>
+        <div class="field"><span class="field-name fk">users</span><span class="field-type">[ObjectId → User]</span></div>
+        <div class="field"><span class="field-name">messages</span><span class="field-type">[Embedded Document]</span></div>
+        <div class="field"><span class="field-name">createdAt / updatedAt</span><span class="field-type">Date (auto)</span></div>
+      </div>
+    </div>
+
+    <!-- MESSAGE (Embedded in Chat) -->
+    <div class="collection embedded">
+      <div class="collection-header">📝 Message (Embedded in Chat)</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId (auto)</span></div>
+        <div class="field"><span class="field-name fk">sender</span><span class="field-type">ObjectId → User</span></div>
+        <div class="field"><span class="field-name">text</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">image</span><span class="field-type">String (URL)</span></div>
+        <div class="field"><span class="field-name">replyTo</span><span class="field-type">Object {_id, text, senderName}</span></div>
+        <div class="field"><span class="field-name fk">readBy</span><span class="field-type">[ObjectId → User]</span></div>
+        <div class="field"><span class="field-name">createdAt</span><span class="field-type">Date</span></div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="collection">
+      <div class="collection-header">🔔 Notification</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field"><span class="field-name fk">user <span class="req">required</span></span><span class="field-type">ObjectId → User</span></div>
+        <div class="field"><span class="field-name">type</span><span class="field-type">Enum [message, system, alert, price, favorite, banned, vehicle_approved]</span></div>
+        <div class="field"><span class="field-name">title</span><span class="field-type">String (default: "Notification")</span></div>
+        <div class="field"><span class="field-name">text <span class="req">required</span></span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">link</span><span class="field-type">String (default: "/inbox")</span></div>
+        <div class="field"><span class="field-name">read</span><span class="field-type">Boolean (default: false)</span></div>
+        <div class="field"><span class="field-name">createdAt / updatedAt</span><span class="field-type">Date (auto)</span></div>
+      </div>
+    </div>
+
+    <!-- REVIEW -->
+    <div class="collection">
+      <div class="collection-header">⭐ Review</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field"><span class="field-name fk">vehicle</span><span class="field-type">ObjectId → Vehicle</span></div>
+        <div class="field"><span class="field-name fk">user</span><span class="field-type">ObjectId → User</span></div>
+        <div class="field"><span class="field-name">rating</span><span class="field-type">Number (1–5)</span></div>
+        <div class="field"><span class="field-name">comment</span><span class="field-type">String</span></div>
+        <div class="field"><span class="field-name">createdAt / updatedAt</span><span class="field-type">Date (auto)</span></div>
+      </div>
+    </div>
+
+    <!-- TRUST LOG -->
+    <div class="collection">
+      <div class="collection-header">🛡️ TrustLog</div>
+      <div class="collection-body">
+        <div class="field"><span class="field-name pk">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field"><span class="field-name fk">seller</span><span class="field-type">ObjectId → User</span></div>
+        <div class="field"><span class="field-name fk">vehicle</span><span class="field-type">ObjectId → Vehicle</span></div>
+        <div class="field"><span class="field-name">trustScore <span class="req">required</span></span><span class="field-type">Number</span></div>
+        <div class="field"><span class="field-name">createdAt / updatedAt</span><span class="field-type">Date (auto)</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RELATIONSHIPS TABLE -->
+<div class="relations">
+  <h2>Entity Relationships</h2>
+  <table class="rel-table">
+    <tr>
+      <th>From</th>
+      <th>To</th>
+      <th>Relationship</th>
+      <th>Type</th>
+      <th>Field</th>
+    </tr>
+    <tr><td>Vehicle</td><td>User</td><td>A vehicle belongs to one user (seller)</td><td>Many → One</td><td>vehicle.user</td></tr>
+    <tr><td>User</td><td>Vehicle</td><td>A user can favorite many vehicles</td><td>Many → Many</td><td>user.favorites</td></tr>
+    <tr><td>Chat</td><td>Vehicle</td><td>A chat is about one vehicle</td><td>Many → One</td><td>chat.vehicle</td></tr>
+    <tr><td>Chat</td><td>User</td><td>A chat has two user participants</td><td>Many → Many</td><td>chat.users</td></tr>
+    <tr><td>Message</td><td>User</td><td>A message is sent by one user</td><td>Many → One</td><td>message.sender</td></tr>
+    <tr><td>Message</td><td>User</td><td>A message can be read by multiple users</td><td>Many → Many</td><td>message.readBy</td></tr>
+    <tr><td>Notification</td><td>User</td><td>A notification belongs to one user</td><td>Many → One</td><td>notification.user</td></tr>
+    <tr><td>Review</td><td>Vehicle</td><td>A review is about one vehicle</td><td>Many → One</td><td>review.vehicle</td></tr>
+    <tr><td>Review</td><td>User</td><td>A review is written by one user</td><td>Many → One</td><td>review.user</td></tr>
+    <tr><td>TrustLog</td><td>User</td><td>A trust log belongs to one seller</td><td>Many → One</td><td>trustLog.seller</td></tr>
+    <tr><td>TrustLog</td><td>Vehicle</td><td>A trust log is for one vehicle</td><td>Many → One</td><td>trustLog.vehicle</td></tr>
+  </table>
+</div>
+
+</body>
+</html>

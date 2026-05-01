@@ -352,7 +352,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           <StatCard label="Total Users" value={stats.totalUsers} icon="👥" color="linear-gradient(135deg, #3b82f6, #1d4ed8)" />
           <StatCard label="Total Vehicles" value={stats.totalVehicles} icon="🚗" color="linear-gradient(135deg, #22c55e, #15803d)" />
-          <StatCard label="Suspicious" value={stats.suspiciousListings} icon="🚨" color="linear-gradient(135deg, #ef4444, #b91c1c)" />
+          <StatCard label="Suspicious" value={flaggedVehicles.length} icon="🚨" color="linear-gradient(135deg, #ef4444, #b91c1c)" />
           <StatCard label="Avg Price" value={`LKR ${Math.round(stats.averagePrice).toLocaleString()}`} icon="💰" color="linear-gradient(135deg, #f97316, #ea580c)" />
         </div>
 
