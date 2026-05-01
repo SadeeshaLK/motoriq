@@ -128,28 +128,28 @@ export default function Home() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <div className="relative min-h-[620px] flex items-center overflow-hidden pt-6"
+      <div className="relative md:min-h-[620px] flex items-center overflow-hidden pt-4 md:pt-6 pb-6 md:pb-0"
         style={{ background: `linear-gradient(135deg, var(--hero-from) 0%, var(--hero-via) 40%, var(--hero-to) 100%)` }}
       >
 
-        {/* BACKGROUND GLOWS */}
-        <div className="absolute w-[700px] h-[700px] rounded-full top-[-200px] left-[-200px]" style={{ background: 'var(--primary)', opacity: 0.06, filter: 'blur(150px)' }} />
-        <div className="absolute w-[500px] h-[500px] rounded-full bottom-[-100px] right-[-100px]" style={{ background: 'var(--blue)', opacity: 0.04, filter: 'blur(120px)' }} />
+        {/* BACKGROUND GLOWS — hidden on mobile */}
+        <div className="hidden md:block absolute w-[700px] h-[700px] rounded-full top-[-200px] left-[-200px]" style={{ background: 'var(--primary)', opacity: 0.06, filter: 'blur(150px)' }} />
+        <div className="hidden md:block absolute w-[500px] h-[500px] rounded-full bottom-[-100px] right-[-100px]" style={{ background: 'var(--blue)', opacity: 0.04, filter: 'blur(120px)' }} />
 
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
+        {/* Grid pattern — hidden on mobile */}
+        <div className="hidden md:block absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `linear-gradient(var(--border-glass) 1px, transparent 1px), linear-gradient(90deg, var(--border-glass) 1px, transparent 1px)`,
           backgroundSize: '60px 60px'
         }} />
 
-        <div className="px-8 md:px-16 w-full relative z-10">
+        <div className="px-4 md:px-16 w-full relative z-10">
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full mb-6"
+            <span className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full mb-4 md:mb-6"
               style={{ background: 'var(--primary-glow)', border: '1px solid rgba(249, 48, 22, 0.2)', color: 'var(--primary-light)' }}>
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--primary)' }} />
               AI-Powered Vehicle Marketplace
@@ -160,7 +160,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold mb-4 leading-tight max-w-2xl"
+            className="text-2xl md:text-5xl font-bold mb-3 md:mb-4 leading-tight max-w-2xl"
             style={{ color: 'var(--text-primary)' }}
           >
             Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-500">Perfect Car</span>
@@ -170,7 +170,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-8 max-w-xl text-base"
+            className="mb-5 md:mb-8 max-w-xl text-sm md:text-base"
             style={{ color: 'var(--text-muted)' }}
           >
             Smart recommendations based on price, fuel, maintenance & trust scoring.
@@ -181,18 +181,18 @@ export default function Home() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="backdrop-blur-xl rounded-2xl p-6 mt-4 space-y-5 max-w-5xl mb-10"
+            className="backdrop-blur-xl rounded-2xl p-4 md:p-6 space-y-4 md:space-y-5 max-w-5xl mb-6 md:mb-10"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)' }}
           >
 
             {/* BASIC FILTERS */}
             <div>
-              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
+              <h3 className="text-sm font-semibold mb-3 md:mb-4 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                 Filters
               </h3>
 
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
 
                 <select
                   className="input"
@@ -256,7 +256,7 @@ export default function Home() {
                   {/* LOCATION */}
                   <div>
                     <h4 className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Location</h4>
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                       <select className="input" value={filters.province}
                         onChange={(e) => setFilters({ ...filters, province: e.target.value, district: "", city: "" })}>
                         <option value="">Province</option>
@@ -278,7 +278,7 @@ export default function Home() {
                   {/* VEHICLE DETAILS */}
                   <div>
                     <h4 className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Vehicle Details</h4>
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                       <select className="input" onChange={(e) => setFilters({ ...filters, condition: e.target.value })}>
                         <option value="">Condition</option><option>Brand New</option><option>Used</option><option>Reconditioned</option>
                       </select>
@@ -305,7 +305,7 @@ export default function Home() {
                   </div>
 
                   {/* PRICE + MILEAGE */}
-                  <div className="grid md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     <input type="number" placeholder="Min Price" className="input" onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })} />
                     <input type="number" placeholder="Max Price" className="input" onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })} />
                     <input type="number" placeholder="Min Mileage" className="input" onChange={(e) => setFilters({ ...filters, minMileage: e.target.value })} />
@@ -346,7 +346,7 @@ export default function Home() {
       </div>
 
       {/* CONTENT */}
-      <div className="px-8 md:px-16 py-12">
+      <div className="px-4 md:px-16 py-6 md:py-12">
 
         <div className="flex justify-between items-center flex-wrap gap-4">
           <CategoryChips selected={category} setSelected={setCategory} />
