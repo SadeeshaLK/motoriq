@@ -948,7 +948,7 @@ div[role="status"] {
   .peer:not(:placeholder-shown) + .floating-label { font-size: 11px; }
 
   /* ── Skeleton loading — single column ── */
-  .animate-pulse {
+  .h-72.animate-pulse {
     height: 280px;
   }
 
