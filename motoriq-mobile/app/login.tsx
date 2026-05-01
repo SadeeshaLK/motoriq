@@ -265,7 +265,7 @@ function RegisterForm({ router, switchMode }) {
     if (!form.email) return alert("Enter email first");
     if (timer > 0) return;
     try {
-      await API.post("/auth/send-otp", { email: form.email });
+      const res = await API.post("/auth/send-otp", { email: form.email });
       setOtpSent(true);
       setTimer(30);
       const iv = setInterval(() => {
@@ -274,7 +274,18 @@ function RegisterForm({ router, switchMode }) {
           return p - 1;
         });
       }, 1000);
-      alert("OTP sent 📧");
+
+      // Auto-fill OTP if returned by backend (no verified domain)
+      if (res.data.otp) {
+        const digits = res.data.otp.toString().split("");
+        setOtpArray(digits);
+      }
+
+      if (res.data.emailSent) {
+        alert("OTP sent to your email 📧");
+      } else {
+        alert("OTP auto-filled ✅");
+      }
     } catch (err) {
       alert(err.response?.data?.message || "Failed to send OTP");
     }

@@ -63,7 +63,7 @@ export default function Register() {
 
   try {
 
-    await axios.post("/auth/send-otp", {
+    const res = await axios.post("/auth/send-otp", {
       email: form.email
     })
 
@@ -80,7 +80,17 @@ export default function Register() {
       })
     }, 1000)
 
-    alert("OTP sent 📧")
+    // Auto-fill OTP if returned by backend (no verified domain)
+    if (res.data.otp) {
+      const digits = res.data.otp.toString().split("")
+      setOtpArray(digits)
+    }
+
+    if (res.data.emailSent) {
+      alert("OTP sent to your email 📧")
+    } else {
+      alert("OTP auto-filled ✅")
+    }
 
   } catch (err) {
     alert(err.response?.data?.message || "Failed")
