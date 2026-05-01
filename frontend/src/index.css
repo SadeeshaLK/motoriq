@@ -689,24 +689,6 @@ div[role="status"] {
 
   /* ── ADMIN DASHBOARD — responsive fixes ── */
 
-  /* Admin header — stack title & export buttons */
-  .flex.items-center.justify-between {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
-  }
-
-  .flex.items-center.justify-between .flex.gap-3 {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .flex.items-center.justify-between .flex.gap-3 button {
-    flex: 1;
-    min-width: 0;
-    text-align: center;
-  }
-
   /* Admin stat cards — smaller on mobile */
   .p-6.rounded-2xl.text-white {
     padding: 14px !important;
@@ -718,26 +700,6 @@ div[role="status"] {
 
   .p-6.rounded-2xl.text-white .text-6xl {
     font-size: 40px !important;
-  }
-
-  /* Admin user rows — stack info + buttons vertically */
-  .flex.items-center.justify-between.p-3.rounded-xl {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
-  }
-
-  .flex.items-center.justify-between.p-3.rounded-xl > .flex.gap-2 {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .flex.items-center.justify-between.p-3.rounded-xl > .flex.gap-2 button {
-    flex: 1;
-    min-width: 0;
-    text-align: center;
-    white-space: nowrap;
-    padding: 6px 8px !important;
   }
 
   /* Admin tab navigation — horizontal scroll */
