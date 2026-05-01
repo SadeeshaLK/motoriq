@@ -534,3 +534,342 @@ div[role="status"] {
   color: var(--text-primary) !important;
   border: 1px solid var(--border-glass) !important;
 }
+
+/* ============================================================
+   MOBILE RESPONSIVE — Match React Native mobile app design
+   Only affects screens <= 768px. Desktop stays untouched.
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── Body & Global ── */
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Navbar: compact mobile header ── */
+  nav .max-w-7xl {
+    padding: 10px 16px;
+  }
+
+  /* ── Hide desktop-only items on mobile ── */
+  nav .hidden.md\:flex,
+  nav .hidden.md\:block {
+    display: none !important;
+  }
+
+  /* ── HERO SECTION — match mobile dark hero ── */
+  .min-h-\[620px\] {
+    min-height: auto !important;
+    padding-top: 20px;
+    padding-bottom: 16px;
+  }
+
+  .min-h-\[620px\] .px-8 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .min-h-\[620px\] h1 {
+    font-size: 26px !important;
+    line-height: 32px;
+  }
+
+  .min-h-\[620px\] p {
+    font-size: 13px !important;
+  }
+
+  /* ── Filter card on mobile — full width, tighter padding ── */
+  .min-h-\[620px\] .backdrop-blur-xl {
+    padding: 16px;
+    border-radius: 20px;
+    margin-top: 12px;
+  }
+
+  .min-h-\[620px\] .backdrop-blur-xl .grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  /* ── Input styles — bigger touch targets ── */
+  .input {
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 12px;
+    border-width: 1.5px;
+  }
+
+  select.input {
+    padding: 14px 36px 14px 16px;
+  }
+
+  /* ── VEHICLE GRID — single column on mobile ── */
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 0 4px;
+  }
+
+  /* ── Content area padding ── */
+  .px-8 {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .py-12 {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  /* ── VEHICLE CARD — mobile app style ── */
+  .group.relative.backdrop-blur-md {
+    border-radius: 16px;
+    margin-bottom: 4px;
+  }
+
+  .group.relative.backdrop-blur-md .h-44 {
+    height: 190px;
+  }
+
+  .group.relative.backdrop-blur-md .p-4 {
+    padding: 14px;
+  }
+
+  .group.relative.backdrop-blur-md h3 {
+    font-size: 16px !important;
+    font-weight: 800;
+  }
+
+  .group.relative.backdrop-blur-md .font-bold.text-lg {
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  /* Card badge text larger */
+  .group.relative.backdrop-blur-md .text-\[10px\] {
+    font-size: 11px;
+  }
+
+  .group.relative.backdrop-blur-md .text-\[11px\] {
+    font-size: 12px;
+  }
+
+  /* Card action buttons — bigger touch targets */
+  .group.relative.backdrop-blur-md .flex.gap-2.mt-3 button {
+    padding: 10px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 10px;
+  }
+
+  /* ── Category Chips — horizontal scroll ── */
+  .flex.justify-between.items-center.flex-wrap {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  .flex.justify-between.items-center.flex-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Sort select on mobile ── */
+  .min-w-\[180px\] {
+    min-width: 120px !important;
+    font-size: 12px;
+  }
+
+  /* ── FAB (Post Free Ad) — mobile optimized ── */
+  .fixed.bottom-8.right-8 {
+    bottom: 24px !important;
+    right: 16px !important;
+    padding: 14px 20px;
+    border-radius: 16px;
+    font-size: 14px;
+  }
+
+  /* ── Compare bar — mobile positioning ── */
+  .fixed.bottom-6 {
+    bottom: 16px !important;
+    left: 8px !important;
+    right: 8px !important;
+    transform: none !important;
+    padding: 12px 14px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+
+  /* ── Login/Register pages — mobile optimized ── */
+  .min-h-screen.flex.items-center.justify-center {
+    padding: 20px 16px !important;
+  }
+
+  .min-h-screen .max-w-md {
+    max-width: 100%;
+  }
+
+  .min-h-screen .max-w-md .backdrop-blur-xl {
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .min-h-screen .max-w-md h2 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .min-h-screen .max-w-md form button[type="submit"] {
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  /* ── Buttons — larger touch targets ── */
+  .btn-orange {
+    padding: 16px 24px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  /* ── Glass card — mobile style ── */
+  .card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  /* ── Pagination — mobile friendly ── */
+  .mt-16 {
+    margin-top: 24px !important;
+  }
+
+  /* ── Dropdown menus — full width on mobile ── */
+  .absolute.right-0.mt-3.w-80,
+  .absolute.right-0.mt-3.w-64 {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-height: 75vh;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: 24px;
+    z-index: 999;
+    animation: slideUp 0.3s ease forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* ── Theme toggle ── */
+  .theme-toggle {
+    width: 44px;
+    height: 24px;
+  }
+
+  .theme-toggle-knob {
+    width: 17px;
+    height: 17px;
+    font-size: 10px;
+  }
+
+  [data-theme="dark"] .theme-toggle-knob {
+    transform: translateX(20px);
+  }
+
+  /* ── Vehicle Details page mobile ── */
+  .md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Account / Settings pages ── */
+  .md\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .md\:grid-cols-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* ── Skeleton loading — single column ── */
+  .grid.grid-cols-2 .animate-pulse {
+    height: 280px;
+  }
+
+  /* ── General text adjustments ── */
+  .text-4xl,
+  .md\:text-5xl {
+    font-size: 26px !important;
+    line-height: 32px !important;
+  }
+
+  .text-2xl {
+    font-size: 22px !important;
+  }
+
+  /* ── Register page — location grid stacked on mobile ── */
+  .grid.grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  /* ── OTP input boxes — match mobile app style ── */
+  .w-10.h-12 {
+    width: 44px !important;
+    height: 52px !important;
+    font-size: 22px !important;
+    font-weight: 700;
+    border-radius: 12px;
+    border-width: 2px;
+  }
+
+  /* ── Floating labels — adjust for mobile ── */
+  .floating-label {
+    font-size: 14px;
+  }
+
+  .peer:focus + .floating-label,
+  .peer:not(:placeholder-shown) + .floating-label {
+    font-size: 11px;
+  }
+
+  /* ── Mobile add vehicle page ── */
+  .md\:px-16 {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* ── Chat / Inbox mobile ── */
+  .md\:flex-row {
+    flex-direction: column !important;
+  }
+}
+
+/* ── Extra small screens (phones < 400px) ── */
+@media (max-width: 400px) {
+  .min-h-\[620px\] h1 {
+    font-size: 22px !important;
+  }
+
+  .group.relative.backdrop-blur-md .h-44 {
+    height: 160px;
+  }
+
+  .md\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+  }
+}
