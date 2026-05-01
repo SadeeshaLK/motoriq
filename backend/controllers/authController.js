@@ -92,11 +92,9 @@ export const sendOtp = async (req, res) => {
     };
     otpCooldown[email] = now;
 
-    // Try sending via Resend (works if domain is verified, otherwise falls back)
-    let emailSent = false;
     try {
-      const { data, error } = await resend.emails.send({
-        from: "MotorIQ <onboarding@resend.dev>",
+      await resend.emails.send({
+        from: "MotorIQ <noreply@studydesk.space>",
         to: email,
         subject: "🔐 Verify Your Email - MotorIQ",
         html: `
@@ -120,23 +118,16 @@ export const sendOtp = async (req, res) => {
         </div>
         `
       });
-
-      if (error) {
-        console.log("Resend API error:", error.message);
-      } else {
-        emailSent = true;
-      }
+      res.json({ success: true });
     } catch (mailError) {
-      console.log("Resend send failed:", mailError.message);
+      console.error("Resend Error:", mailError.message);
+      // Fallback: If Resend fails, give them a bypass master OTP so they can test
+      otpStore[email].otp = "123456";
+      res.json({ 
+        success: true, 
+        message: "Email service unavailable. Bypass OTP is 123456." 
+      });
     }
-
-    // Always return success with the OTP so the frontend can auto-fill it
-    // (In production with a verified domain, you'd remove the otp from the response)
-    res.json({ 
-      success: true, 
-      otp,
-      emailSent
-    });
   } catch (error) {
     res.status(500).json({ message: "Failed to process OTP request", error: error.message });
   }
