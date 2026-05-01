@@ -143,7 +143,7 @@ export default function Account() {
     return (
       <button
         onClick={() => setActiveTab(key)}
-        className="w-full relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 overflow-hidden"
+        className="relative flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl transition-all duration-300 overflow-hidden whitespace-nowrap flex-shrink-0 md:flex-shrink md:w-full"
         style={{
           color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
           fontWeight: isActive ? 600 : 500,
@@ -159,8 +159,8 @@ export default function Account() {
             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
           />
         )}
-        <span className="relative z-10 text-lg">{icon}</span>
-        <span className="relative z-10">{label}</span>
+        <span className="relative z-10 text-base md:text-lg">{icon}</span>
+        <span className="relative z-10 text-sm md:text-base">{label}</span>
       </button>
     )
   }
@@ -171,46 +171,46 @@ export default function Account() {
       <Navbar />
 
       {/* Hero Header Area */}
-      <div className="relative pt-10 pb-20 overflow-hidden" style={{ background: `linear-gradient(135deg, var(--hero-from) 0%, var(--hero-via) 40%, var(--hero-to) 100%)` }}>
+      <div className="relative pt-6 pb-12 md:pt-10 md:pb-20 overflow-hidden" style={{ background: `linear-gradient(135deg, var(--hero-from) 0%, var(--hero-via) 40%, var(--hero-to) 100%)` }}>
         <div className="absolute w-[500px] h-[500px] rounded-full top-[-100px] left-[-100px]" style={{ background: 'var(--primary)', opacity: 0.05, filter: 'blur(100px)' }} />
         
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="flex items-center gap-6"
           >
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-4xl font-bold shadow-xl overflow-hidden"
+            <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold shadow-xl overflow-hidden flex-shrink-0"
               style={{ boxShadow: '0 8px 32px var(--primary-glow)' }}>
-              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              <svg className="w-8 h-8 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             </div>
             <div>
-              <h1 className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{user?.name || "Your Account"}</h1>
+              <h1 className="text-xl md:text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{user?.name || "Your Account"}</h1>
               <p className="font-medium" style={{ color: 'var(--text-muted)' }}>{user?.email}</p>
             </div>
           </motion.div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 -mt-12 pb-20 relative z-20">
+      <div className="max-w-7xl mx-auto px-3 md:px-6 -mt-6 md:-mt-12 pb-12 md:pb-20 relative z-20">
 
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="flex flex-col md:grid md:grid-cols-4 gap-4 md:gap-8">
 
           {/* SIDEBAR */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="col-span-1 rounded-2xl p-4 h-fit backdrop-blur-xl border flex flex-col gap-2"
-            style={{ background: 'var(--bg-card)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}
+            className="rounded-2xl p-3 md:p-4 h-fit backdrop-blur-xl border flex flex-row md:flex-col gap-1 md:gap-2 overflow-x-auto md:overflow-visible"
+            style={{ background: 'var(--bg-card)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)', scrollbarWidth: 'none' }}
           >
             {menuItem("ads", "My Ads", "🚗")}
             {menuItem("favorites", "Favorites", "❤️")}
             {menuItem("edit", "Edit Profile", "✏️")}
             {menuItem("password", "Security", "🔒")}
 
-            <hr style={{ borderColor: 'var(--border-subtle)', margin: '16px 0' }} />
+            <hr className="hidden md:block" style={{ borderColor: 'var(--border-subtle)', margin: '16px 0' }} />
 
             <button
               onClick={() => {
@@ -233,8 +233,8 @@ export default function Account() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="col-span-3 rounded-2xl p-8 backdrop-blur-xl border min-h-[500px]"
-            style={{ background: 'var(--bg-card)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}
+            className="rounded-2xl p-4 md:p-8 backdrop-blur-xl border md:col-span-3"
+            style={{ background: 'var(--bg-card)', borderColor: 'var(--border-glass)', boxShadow: 'var(--shadow-lg)', minHeight: 'auto' }}
           >
             <AnimatePresence mode="wait">
 
@@ -379,7 +379,7 @@ export default function Account() {
                   <p className="mb-8 font-medium" style={{ color: 'var(--text-muted)' }}>Update your public profile details and contact info.</p>
 
                   <div className="space-y-5 max-w-xl">
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="relative">
                         <input id="name" type="text" className="input peer" placeholder=" " value={profileData.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} />
                         <label htmlFor="name" className="floating-label">Full Name</label>
@@ -390,7 +390,7 @@ export default function Account() {
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="relative">
                         <input id="phone" type="text" className="input peer" placeholder=" " value={profileData.phone} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} />
                         <label htmlFor="phone" className="floating-label">Phone Number</label>

@@ -110,11 +110,13 @@ export default function Inbox(){
 
       <Navbar/>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-3 gap-6 p-10">
+      <div className="max-w-7xl mx-auto p-4 md:p-10" style={{ height: 'calc(100vh - 64px)' }}>
+
+        <div className="h-full flex flex-col md:flex-row gap-4 md:gap-6">
 
         {/* ===== CHAT LIST SIDEBAR ===== */}
 
-        <div className="rounded-xl backdrop-blur-md overflow-hidden flex flex-col"
+        <div className={`${activeChat ? 'hidden md:flex' : 'flex'} flex-col rounded-xl backdrop-blur-md overflow-hidden md:w-[340px] md:min-w-[340px]`}
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)', maxHeight: 'calc(100vh - 140px)' }}>
 
           {/* Header */}
@@ -232,13 +234,23 @@ export default function Inbox(){
 
         {/* ===== CHAT WINDOW ===== */}
 
-        <div className="col-span-2">
+        <div className={`${activeChat ? 'flex' : 'hidden md:flex'} flex-1 flex-col min-w-0`}>
 
           {activeChat ? (
-            <ChatWindow
-              chat={activeChat}
-              onDeleteChat={() => handleDeleteChat(activeChat._id)}
-            />
+            <div className="flex flex-col h-full">
+              {/* Mobile back button */}
+              <button
+                onClick={() => setActiveChat(null)}
+                className="md:hidden flex items-center gap-2 px-3 py-2 mb-2 rounded-lg text-sm font-medium w-fit"
+                style={{ background: 'var(--bg-glass)', color: 'var(--text-secondary)', border: '1px solid var(--border-glass)' }}
+              >
+                ← Back to Messages
+              </button>
+              <ChatWindow
+                chat={activeChat}
+                onDeleteChat={() => handleDeleteChat(activeChat._id)}
+              />
+            </div>
           ) : (
             <div className="rounded-xl p-16 text-center backdrop-blur-md flex flex-col items-center gap-4"
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-md)', minHeight: '500px', justifyContent: 'center' }}>
@@ -263,6 +275,8 @@ export default function Inbox(){
 
             </div>
           )}
+
+        </div>
 
         </div>
 

@@ -552,11 +552,16 @@ div[role="status"] {
     padding: 10px 16px;
   }
 
-  /* ── Hide desktop-only items on mobile ── */
-  nav .hidden.md\:flex,
-  nav .hidden.md\:block {
-    display: none !important;
-  }
+  /* ── ALL padding overrides ── */
+  .p-8 { padding: 12px !important; }
+  .p-10 { padding: 12px !important; }
+  .p-6 { padding: 14px !important; }
+  .px-8 { padding-left: 12px !important; padding-right: 12px !important; }
+  .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
+  .py-12 { padding-top: 16px !important; padding-bottom: 16px !important; }
+  .pb-20 { padding-bottom: 12px !important; }
+  .pt-10 { padding-top: 16px !important; }
+  .mb-8 { margin-bottom: 16px !important; }
 
   /* ── HERO SECTION — match mobile dark hero ── */
   .min-h-\[620px\] {
@@ -565,14 +570,9 @@ div[role="status"] {
     padding-bottom: 16px;
   }
 
-  .min-h-\[620px\] .px-8 {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-
   .min-h-\[620px\] h1 {
-    font-size: 26px !important;
-    line-height: 32px;
+    font-size: 24px !important;
+    line-height: 30px !important;
   }
 
   .min-h-\[620px\] p {
@@ -586,9 +586,39 @@ div[role="status"] {
     margin-top: 12px;
   }
 
-  .min-h-\[620px\] .backdrop-blur-xl .grid {
+  /* ── ALL GRIDS — force responsive columns ── */
+  .grid.grid-cols-2,
+  .grid.grid-cols-3,
+  .grid.grid-cols-4,
+  .grid.lg\:grid-cols-4,
+  .grid.lg\:grid-cols-6 {
     grid-template-columns: 1fr !important;
-    gap: 10px;
+    gap: 10px !important;
+  }
+
+  .grid.md\:grid-cols-2,
+  .grid.md\:grid-cols-3,
+  .grid.md\:grid-cols-4,
+  .grid.lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Stat cards — 2 columns on mobile */
+  .grid.grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Weekly stats — stack on mobile */
+  .grid.grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Overview charts — stack on mobile */
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr !important;
   }
 
   /* ── Input styles — bigger touch targets ── */
@@ -603,22 +633,129 @@ div[role="status"] {
     padding: 14px 36px 14px 16px;
   }
 
-  /* ── VEHICLE GRID — single column on mobile ── */
-  .grid.grid-cols-2 {
+  /* ── ACCOUNT PAGE — sidebar + content stacking ── */
+  .grid.md\:grid-cols-4 {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
-    padding: 0 4px;
   }
 
-  /* ── Content area padding ── */
-  .px-8 {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+  .col-span-1 {
+    flex-direction: row !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px !important;
+    padding: 12px !important;
   }
 
-  .py-12 {
-    padding-top: 16px !important;
-    padding-bottom: 16px !important;
+  .col-span-1::-webkit-scrollbar {
+    display: none;
+  }
+
+  .col-span-3 {
+    padding: 16px !important;
+    min-height: auto !important;
+  }
+
+  /* Account header — stack avatar & name */
+  .flex.items-center.gap-6 {
+    gap: 12px !important;
+  }
+
+  .flex.items-center.gap-6 .w-24.h-24 {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .flex.items-center.gap-6 h1 {
+    font-size: 22px !important;
+  }
+
+  /* Account profile form — single column */
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* ── INBOX PAGE — chat list + chat window stacking ── */
+  .grid.grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .col-span-2 {
+    grid-column: span 1 !important;
+  }
+
+  /* ── ADMIN DASHBOARD — responsive fixes ── */
+
+  /* Admin header — stack title & export buttons */
+  .flex.items-center.justify-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .flex.items-center.justify-between .flex.gap-3 {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .flex.items-center.justify-between .flex.gap-3 button {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+  }
+
+  /* Admin stat cards — smaller on mobile */
+  .p-6.rounded-2xl.text-white {
+    padding: 14px !important;
+  }
+
+  .p-6.rounded-2xl.text-white h2 {
+    font-size: 22px !important;
+  }
+
+  .p-6.rounded-2xl.text-white .text-6xl {
+    font-size: 40px !important;
+  }
+
+  /* Admin user rows — stack info + buttons vertically */
+  .flex.items-center.justify-between.p-3.rounded-xl {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .flex.items-center.justify-between.p-3.rounded-xl > .flex.gap-2 {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .flex.items-center.justify-between.p-3.rounded-xl > .flex.gap-2 button {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
+    padding: 6px 8px !important;
+  }
+
+  /* Admin tab navigation — horizontal scroll */
+  .flex.gap-2.mb-6.flex-wrap {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .flex.gap-2.mb-6.flex-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .flex.gap-2.mb-6.flex-wrap button {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   /* ── VEHICLE CARD — mobile app style ── */
@@ -645,7 +782,6 @@ div[role="status"] {
     font-weight: 800;
   }
 
-  /* Card badge text larger */
   .group.relative.backdrop-blur-md .text-\[10px\] {
     font-size: 11px;
   }
@@ -664,12 +800,14 @@ div[role="status"] {
 
   /* ── Category Chips — horizontal scroll ── */
   .flex.justify-between.items-center.flex-wrap {
-    flex-wrap: nowrap;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 8px;
     padding-bottom: 8px;
+    align-items: center !important;
   }
 
   .flex.justify-between.items-center.flex-wrap::-webkit-scrollbar {
@@ -705,6 +843,8 @@ div[role="status"] {
   /* ── Login/Register pages — mobile optimized ── */
   .min-h-screen.flex.items-center.justify-center {
     padding: 20px 16px !important;
+    align-items: flex-start !important;
+    padding-top: 40px !important;
   }
 
   .min-h-screen .max-w-md {
@@ -722,11 +862,28 @@ div[role="status"] {
     letter-spacing: -0.5px;
   }
 
-  .min-h-screen .max-w-md form button[type="submit"] {
+  .min-h-screen .max-w-md form button[type="submit"],
+  .min-h-screen .max-w-md button.w-full {
     padding: 16px;
     border-radius: 14px;
     font-size: 15px;
     font-weight: 800;
+  }
+
+  /* ── Register page — location grid stacked on mobile ── */
+  .grid.grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  /* ── OTP input boxes — match mobile app style ── */
+  .w-10.h-12 {
+    width: 44px !important;
+    height: 52px !important;
+    font-size: 22px !important;
+    font-weight: 700;
+    border-radius: 12px;
+    border-width: 2px;
   }
 
   /* ── Buttons — larger touch targets ── */
@@ -748,7 +905,7 @@ div[role="status"] {
     margin-top: 24px !important;
   }
 
-  /* ── Dropdown menus — full width on mobile ── */
+  /* ── Dropdown menus — full-screen bottom sheets on mobile ── */
   .absolute.right-0.mt-3.w-80,
   .absolute.right-0.mt-3.w-64 {
     position: fixed !important;
@@ -765,14 +922,8 @@ div[role="status"] {
   }
 
   @keyframes slideUp {
-    from {
-      transform: translateY(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 
   /* ── Theme toggle ── */
@@ -791,85 +942,66 @@ div[role="status"] {
     transform: translateX(20px);
   }
 
-  /* ── Vehicle Details page mobile ── */
-  .md\:grid-cols-2 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* ── Account / Settings pages ── */
-  .md\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  .md\:grid-cols-4 {
-    grid-template-columns: 1fr 1fr !important;
-  }
+  /* ── Floating labels — adjust for mobile ── */
+  .floating-label { font-size: 14px; }
+  .peer:focus + .floating-label,
+  .peer:not(:placeholder-shown) + .floating-label { font-size: 11px; }
 
   /* ── Skeleton loading — single column ── */
-  .grid.grid-cols-2 .animate-pulse {
+  .animate-pulse {
     height: 280px;
   }
 
   /* ── General text adjustments ── */
-  .text-4xl,
-  .md\:text-5xl {
-    font-size: 26px !important;
-    line-height: 32px !important;
+  .text-4xl, .md\:text-5xl {
+    font-size: 24px !important;
+    line-height: 30px !important;
+  }
+
+  .text-3xl {
+    font-size: 20px !important;
+    line-height: 26px !important;
   }
 
   .text-2xl {
-    font-size: 22px !important;
+    font-size: 20px !important;
   }
 
-  /* ── Register page — location grid stacked on mobile ── */
-  .grid.grid-cols-3 {
-    grid-template-columns: 1fr !important;
-    gap: 10px;
+  /* ── -mt-12 (Account page overlap) ── */
+  .-mt-12 {
+    margin-top: -16px !important;
   }
 
-  /* ── OTP input boxes — match mobile app style ── */
-  .w-10.h-12 {
-    width: 44px !important;
-    height: 52px !important;
-    font-size: 22px !important;
-    font-weight: 700;
-    border-radius: 12px;
-    border-width: 2px;
+  /* ── Boost modal mobile ── */
+  .fixed.inset-0 .max-w-md {
+    max-width: 100% !important;
+    margin: 8px;
   }
 
-  /* ── Floating labels — adjust for mobile ── */
-  .floating-label {
-    font-size: 14px;
-  }
-
-  .peer:focus + .floating-label,
-  .peer:not(:placeholder-shown) + .floating-label {
-    font-size: 11px;
-  }
-
-  /* ── Mobile add vehicle page ── */
-  .md\:px-16 {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-
-  /* ── Chat / Inbox mobile ── */
+  /* ── Vehicle detail page image gallery ── */
   .md\:flex-row {
     flex-direction: column !important;
+  }
+
+  /* ── Max widths on mobile ── */
+  .max-w-7xl {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
   }
 }
 
 /* ── Extra small screens (phones < 400px) ── */
 @media (max-width: 400px) {
   .min-h-\[620px\] h1 {
-    font-size: 22px !important;
+    font-size: 20px !important;
   }
 
   .group.relative.backdrop-blur-md .h-44 {
     height: 160px;
   }
 
-  .md\:grid-cols-4 {
+  /* Stat cards — single column on very small */
+  .grid.grid-cols-2.lg\:grid-cols-4 {
     grid-template-columns: 1fr !important;
   }
 }

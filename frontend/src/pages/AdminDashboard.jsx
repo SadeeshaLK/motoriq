@@ -326,15 +326,15 @@ export default function AdminDashboard() {
       <Toaster />
       <Navbar />
 
-      <div className="p-8 max-w-7xl mx-auto">
+      <div className="p-4 md:p-8 max-w-7xl mx-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-3">
           <div>
             <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>🛡 Admin Dashboard</h1>
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>MotorIQ platform management</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2 flex-wrap">
             <button onClick={exportUsersCSV}
               className="text-sm px-4 py-2 rounded-lg font-medium transition-all hover:-translate-y-0.5"
               style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)', boxShadow: 'var(--shadow-sm)' }}>
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-6 md:mb-8">
           <StatCard label="Total Users" value={stats.totalUsers} icon="👥" color="linear-gradient(135deg, #3b82f6, #1d4ed8)" />
           <StatCard label="Total Vehicles" value={stats.totalVehicles} icon="🚗" color="linear-gradient(135deg, #22c55e, #15803d)" />
           <StatCard label="Suspicious" value={flaggedVehicles.length} icon="🚨" color="linear-gradient(135deg, #ef4444, #b91c1c)" />
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Weekly Stats */}
-        <div className="grid grid-cols-3 gap-5 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5 mb-6 md:mb-8">
           <div className="p-4 rounded-xl flex items-center gap-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-sm)' }}>
             <div className="text-2xl">🆕</div>
             <div>
@@ -382,10 +382,10 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-2 mb-6 flex-wrap">
+        <div className="flex gap-2 mb-4 md:mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0"
               style={activeTab === tab.key
                 ? { background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', color: 'white', boxShadow: '0 2px 8px var(--primary-glow)' }
                 : { background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)' }
@@ -398,7 +398,7 @@ export default function AdminDashboard() {
         {/* ===== TAB: OVERVIEW ===== */}
         {activeTab === "overview" && (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="p-6 rounded-2xl backdrop-blur-lg" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
                 <h3 className="font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Buyer vs Seller Split</h3>
                 <ResponsiveContainer width="100%" height={280}>
@@ -442,27 +442,29 @@ export default function AdminDashboard() {
         {activeTab === "users" && (
           <div className="p-6 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
-            <div className="flex gap-3 mb-4 flex-wrap">
+            <div className="flex flex-col gap-3 mb-4">
               <input
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); fetchUsers(e.target.value, userFilter) }}
                 placeholder="Search by name or email..."
-                className="input flex-1"
+                className="input w-full"
               />
-              {["all","banned","admin"].map(f => (
-                <button key={f} onClick={() => { setUserFilter(f); fetchUsers(search, f) }}
-                  className="px-3 py-2 rounded-lg text-sm font-medium capitalize transition-all"
-                  style={userFilter === f
-                    ? { background: 'var(--primary)', color: 'white' }
-                    : { background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)' }
-                  }>
-                  {f}
+              <div className="flex gap-2 flex-wrap">
+                {["all","banned","admin"].map(f => (
+                  <button key={f} onClick={() => { setUserFilter(f); fetchUsers(search, f) }}
+                    className="px-3 py-2 rounded-lg text-sm font-medium capitalize transition-all"
+                    style={userFilter === f
+                      ? { background: 'var(--primary)', color: 'white' }
+                      : { background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)' }
+                    }>
+                    {f}
+                  </button>
+                ))}
+                <button onClick={() => fetchUsers(search, userFilter)}
+                  className="px-3 py-2 rounded-lg text-sm" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)' }}>
+                  🔄 Refresh
                 </button>
-              ))}
-              <button onClick={() => fetchUsers(search, userFilter)}
-                className="px-3 py-2 rounded-lg text-sm" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)' }}>
-                🔄 Refresh
-              </button>
+              </div>
             </div>
 
             <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>{filteredUsers.length} users</p>
@@ -470,7 +472,7 @@ export default function AdminDashboard() {
             <div className="space-y-2">
               {filteredUsers.map(user => (
                 <div key={user._id}
-                  className="flex items-center justify-between p-3 rounded-xl transition-all"
+                  className="flex flex-col md:flex-row md:items-center justify-between p-3 rounded-xl transition-all gap-2 md:gap-0"
                   style={{ border: '1px solid var(--border-subtle)', background: selectedUser?._id === user._id ? 'var(--bg-glass-hover)' : 'transparent' }}>
 
                   <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedUser(selectedUser?._id === user._id ? null : user)}>
@@ -488,24 +490,24 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 flex-wrap">
                     <button onClick={() => navigate(`/seller/${user._id}`)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all"
+                      className="text-xs px-2 py-1.5 rounded-lg transition-all"
                       style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)' }}>
                       View
                     </button>
                     <button onClick={() => toggleAdmin(user._id)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all"
+                      className="text-xs px-2 py-1.5 rounded-lg transition-all"
                       style={{ background: 'var(--blue-glow)', color: 'var(--blue)' }}>
                       {user.isAdmin ? "Revoke Admin" : "Make Admin"}
                     </button>
                     <button onClick={() => banUser(user._id)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all"
+                      className="text-xs px-2 py-1.5 rounded-lg transition-all"
                       style={{ background: 'var(--primary-glow)', color: 'var(--primary)' }}>
                       {user.isBanned ? "Unban" : "Ban"}
                     </button>
                     <button onClick={() => deleteUser(user._id)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all"
+                      className="text-xs px-2 py-1.5 rounded-lg transition-all"
                       style={{ background: 'var(--red-glow)', color: 'var(--red)' }}>
                       Delete
                     </button>
@@ -521,7 +523,7 @@ export default function AdminDashboard() {
         {activeTab === "vehicles" && (
           <div className="p-6 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-lg)' }}>
 
-            <div className="flex gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <input
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); fetchVehicles(e.target.value) }}
@@ -539,7 +541,7 @@ export default function AdminDashboard() {
             <div className="space-y-2">
               {vehicles.map(v => (
                 <div key={v._id}
-                  className="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl cursor-pointer transition-all gap-2 sm:gap-0"
                   style={{ border: '1px solid var(--border-subtle)', background: selectedVehicle?._id === v._id ? 'var(--bg-glass-hover)' : 'transparent' }}
                   onClick={() => setSelectedVehicle(selectedVehicle?._id === v._id ? null : v)}>
 
